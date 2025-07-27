@@ -7,7 +7,6 @@ import { marketDataService } from '../../services/marketDataService';
 interface CalendarProps {
   symbol: string;
   selectedMetrics: string[];
-  currentTheme?: { colors: { low: string; medium: string; high: string } };
   onCellClick: (cell: CalendarCellType) => void;
   onCellHover: (cell: CalendarCellType | null) => void;
   onTimeframeChange?: (timeframe: 'daily' | 'weekly' | 'monthly') => void;
@@ -16,9 +15,8 @@ interface CalendarProps {
 export const Calendar: React.FC<CalendarProps> = ({
   symbol,
   selectedMetrics,
-  currentTheme,
   onCellClick,
-  onCellHover
+  onCellHover,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [timeframe, setTimeframe] = useState<TimeFrame['id']>('daily');
@@ -127,7 +125,6 @@ export const Calendar: React.FC<CalendarProps> = ({
           marketData={marketData}
           selectedDate={selectedDate}
           selectedMetrics={selectedMetrics}
-          currentTheme={currentTheme}
           onCellClick={handleCellClick}
           onCellHover={onCellHover}
         />

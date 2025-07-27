@@ -1,12 +1,12 @@
 import React from 'react';
 import { CalendarCell as CalendarCellType, MarketData } from '../../types';
 import { TrendingUp, TrendingDown, Volume2, AlertCircle } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 interface CalendarCellProps {
   cell: CalendarCellType;
   timeframe?: 'daily' | 'weekly' | 'monthly';
   selectedMetrics: string[];
-  currentTheme?: { colors: { low: string; medium: string; high: string } };
   onClick: (cell: CalendarCellType) => void;
   onHover: (cell: CalendarCellType | null) => void;
 }
@@ -15,10 +15,11 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
   cell,
   timeframe = 'daily',
   selectedMetrics,
-  currentTheme,
   onClick,
   onHover
 }) => {
+
+  const { currentTheme } = useSelector((state) => state.marketData);
   const today = new Date();
   today.setHours(23, 59, 59, 999);
   const isFuture = cell.date > today;
@@ -86,6 +87,14 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
     return 'h-28';
   };
 
+  const formatNumberCompact = (num) => {
+  if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+  if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  return num.toLocaleString();
+}
+
+
   return (
     <div
       className={`
@@ -121,8 +130,11 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
         {cell.data && !isFuture && (
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className={`text-xs text-gray-300 ${timeframe !== 'daily' ? 'text-[10px]' : ''}`}>
+              <span className={`hidden md:block text-xs text-gray-300 ${timeframe !== 'daily' ? 'text-[10px]' : ''}`}>
                 ${cell.data.close.toLocaleString()}
+              </span>
+              <span className={`block md:hidden text-[10px] sm:text-xs text-gray-300 ${timeframe !== 'daily' ? 'text-[10px]' : ''}`}>
+                ${formatNumberCompact(cell.data.close)}
               </span>
               <Volume2 className="w-3 h-3 text-gray-400" />
             </div>
