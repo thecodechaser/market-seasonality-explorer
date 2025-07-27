@@ -1,23 +1,25 @@
-import React from 'react';
 import { X, TrendingUp, TrendingDown, BarChart3, Activity } from 'lucide-react';
-import { DashboardData } from '../../types';
 import { PriceChart } from './PriceChart';
 import { MetricsGrid } from './MetricsGrid';
+import { updateDashboardData } from '../../store/marketDataSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
-interface DashboardPanelProps {
-  dashboardData: DashboardData;
-  onClose: () => void;
-}
-
-export const DashboardPanel: React.FC<DashboardPanelProps> = ({
-  dashboardData,
-  onClose,
+export const DashboardPanel = ({
 }) => {
+  const dispatch = useDispatch();
+  const { dashboardData } = useSelector((state) => state.marketData);
+  
   if (!dashboardData.isVisible || !dashboardData.data) {
     return null;
   }
 
   const { data, selectedDate, timeframe = 'daily' } = dashboardData;
+
+  const handleClose = () => {
+    dispatch(updateDashboardData({ isVisible: false }));
+  };
+
+  const parsedDate = new Date(selectedDate);
 
   return (
     <div
@@ -31,10 +33,10 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
             <h3 className="font-semibold text-white text-md md:text-lg">Market Details</h3>
             <p className="text-xs text-gray-400 md:text-sm">
               {(() => {
-                if (!selectedDate) return '';
+                if (!parsedDate) return '';
 
                 if (timeframe === 'monthly') {
-                  return `Month: ${selectedDate.toLocaleDateString('en-US', {
+                  return `Month: ${parsedDate.toLocaleDateString('en-US', {
                     month: 'long',
                     year: 'numeric',
                   })}`;
@@ -53,7 +55,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                     year: 'numeric',
                   })}`;
                 }
-                return selectedDate.toLocaleDateString('en-US', {
+                return parsedDate.toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -63,7 +65,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 text-gray-400 transition-colors rounded-lg hover:bg-white/10 hover:text-white"
           >
             <X className="w-5 h-5" />

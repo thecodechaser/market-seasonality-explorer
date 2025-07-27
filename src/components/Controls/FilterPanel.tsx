@@ -12,13 +12,8 @@ import {
 import { FilterOptions, ColorTheme } from '../../types';
 import { binanceApi, BinanceSymbol } from '../../services/binanceApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateCurrentTheme } from '../../store/marketDataSlice';
+import { updateCurrentTheme, updateFilters } from '../../store/marketDataSlice';
 import { exportMarketData } from '../../utils/exportMarketData.ts';
-
-interface FilterPanelProps {
-  filters: FilterOptions;
-  onFiltersChange: (filters: FilterOptions) => void;
-}
 
 const metrics = ['Volatility', 'Liquidity', 'Performance', 'Volume'];
 
@@ -40,12 +35,11 @@ const colorThemes: ColorTheme[] = [
   },
 ];
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({
-  filters,
-  onFiltersChange,
-}) => {
+export const FilterPanel = ({}) => {
   const dispatch = useDispatch();
-  const { currentTheme, exportData } = useSelector((state) => state.marketData);
+  const { currentTheme, exportData, filters } = useSelector(
+    (state) => state.marketData
+  );
 
   const [symbols, setSymbols] = useState<BinanceSymbol[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -166,6 +160,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     });
   };
 
+  const handleFilterChange = (newFilters: FilterOptions) => {
+    dispatch(updateFilters(newFilters));
+  };
+
   return (
     <div className="p-4 mb-6 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
       <div className="flex items-center justify-between mb-4">
@@ -246,8 +244,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     <button
                       key={symbol.symbol}
                       onClick={() => {
-                        onFiltersChange({
-                          ...filters,
+                        handleFilterChange({
                           symbol: symbol.baseAsset,
                         });
                         setShowSymbolSearch(false);
@@ -287,7 +284,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     const newMetrics = e.target.checked
                       ? [...filters.metrics, metric]
                       : filters.metrics.filter((m) => m !== metric);
-                    onFiltersChange({ ...filters, metrics: newMetrics });
+                    handleFilterChange({ metrics: newMetrics });
                   }}
                   className="mr-2 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
                 />

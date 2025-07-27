@@ -2,32 +2,23 @@ import React, { useMemo, useEffect } from 'react';
 import {
   CalendarCell as CalendarCellType,
   MarketData,
-  TimeFrame,
 } from '../../types';
 import { CalendarCell } from './CalendarCell';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateExportData } from '../../store/marketDataSlice';
 
 interface CalendarGridProps {
   currentDate: Date;
-  timeframe: TimeFrame['id'];
   marketData: MarketData[];
-  selectedDate: Date | null;
-  selectedMetrics: string[];
-  onCellClick: (cell: CalendarCellType) => void;
-  onCellHover: (cell: CalendarCellType | null) => void;
 }
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({
   currentDate,
-  timeframe,
   marketData,
-  selectedDate,
-  selectedMetrics,
-  onCellClick,
-  onCellHover,
 }) => {
   const dispatch = useDispatch();
+  const { selectedDate, timeframe } = useSelector((state) => state.marketData);
+   const parsedDate = new Date(selectedDate);
   const cells = useMemo(() => {
     const cells: CalendarCellType[] = [];
     const today = new Date();
@@ -53,8 +44,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           date: new Date(date),
           data,
           isToday: date.getTime() === today.getTime(),
-          isSelected: selectedDate
-            ? date.getTime() === selectedDate.getTime()
+          isSelected: parsedDate
+            ? date.getTime() === parsedDate.getTime()
             : false,
           isInRange: false,
           timeframe: 'daily',
@@ -119,8 +110,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           date: new Date(weekStart),
           data: aggregatedData,
           isToday: isCurrentWeek,
-          isSelected: selectedDate
-            ? selectedDate >= weekStart && selectedDate <= weekEnd
+          isSelected: parsedDate
+            ? parsedDate >= weekStart && parsedDate <= weekEnd
             : false,
           isInRange: false,
           timeframe: 'weekly',
@@ -177,9 +168,9 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           date: new Date(monthStart),
           data: aggregatedData,
           isToday: isCurrentMonth,
-          isSelected: selectedDate
-            ? selectedDate.getMonth() === month &&
-              selectedDate.getFullYear() === year
+          isSelected: parsedDate
+            ? parsedDate.getMonth() === month &&
+              parsedDate.getFullYear() === year
             : false,
           isInRange: false,
           timeframe: 'monthly',
@@ -187,7 +178,6 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
       }
     }
     
-    // dispatch(updateExportData(cells.map(({ date, ...rest }) => rest)));
     return cells;
   }, [currentDate, timeframe, marketData, selectedDate]);
 
@@ -239,10 +229,6 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           <CalendarCell
             key={index}
             cell={cell}
-            onClick={onCellClick}
-            onHover={onCellHover}
-            timeframe={timeframe}
-            selectedMetrics={selectedMetrics}
           />
         ))}
       </div>

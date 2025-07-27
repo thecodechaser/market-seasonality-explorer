@@ -1,28 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
-import { CalendarCell as CalendarCellType, MarketData, TimeFrame } from '../../types';
+import { MarketData } from '../../types';
 import { marketDataService } from '../../services/marketDataService';
+import { useSelector } from 'react-redux';
 
-interface CalendarProps {
-  symbol: string;
-  selectedMetrics: string[];
-  onCellClick: (cell: CalendarCellType) => void;
-  onCellHover: (cell: CalendarCellType | null) => void;
-  onTimeframeChange?: (timeframe: 'daily' | 'weekly' | 'monthly') => void;
-}
-
-export const Calendar: React.FC<CalendarProps> = ({
-  symbol,
-  selectedMetrics,
-  onCellClick,
-  onCellHover,
-}) => {
+export const Calendar = ({}) => {
+  const { timeframe, filters } = useSelector((state) => state.marketData);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [timeframe, setTimeframe] = useState<TimeFrame['id']>('daily');
   const [marketData, setMarketData] = useState<MarketData[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
+  const symbol = filters.symbol || 'BTC';
 
   useEffect(() => {
     loadMarketData();
@@ -34,9 +22,11 @@ export const Calendar: React.FC<CalendarProps> = ({
       if (timeframe === 'daily') {
         try {
           const realtimeData = await marketDataService.getRealtimeData(symbol);
-          setMarketData(prevData => {
+          setMarketData((prevData) => {
             const updatedData = [...prevData];
-            const todayIndex = updatedData.findIndex(d => d.date === realtimeData.date);
+            const todayIndex = updatedData.findIndex(
+              (d) => d.date === realtimeData.date
+            );
             if (todayIndex >= 0) {
               updatedData[todayIndex] = realtimeData;
             } else {
@@ -56,17 +46,30 @@ export const Calendar: React.FC<CalendarProps> = ({
     setLoading(true);
     try {
       let startDate: Date, endDate: Date;
-      
+
       if (timeframe === 'daily' || timeframe === 'weekly') {
-        startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        startDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1
+        );
+        endDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0
+        );
       } else {
         // Monthly view - get full year data
         startDate = new Date(currentDate.getFullYear(), 0, 1);
         endDate = new Date(currentDate.getFullYear(), 11, 31);
       }
-      
-      const data = await marketDataService.getMarketData(startDate, endDate, symbol, timeframe);
+
+      const data = await marketDataService.getMarketData(
+        startDate,
+        endDate,
+        symbol,
+        timeframe
+      );
       setMarketData(data);
     } catch (error) {
       console.error('Failed to load market data:', error);
@@ -95,20 +98,12 @@ export const Calendar: React.FC<CalendarProps> = ({
     setCurrentDate(newDate);
   };
 
-  const handleCellClick = (cell: CalendarCellType) => {
-    setSelectedDate(cell.date);
-    const cellWithTimeframe = { ...cell, timeframe };
-    onCellClick(cellWithTimeframe);
-  };
-
   return (
     <div className="space-y-6">
       <CalendarHeader
         currentDate={currentDate}
-        timeframe={timeframe}
         onPrevious={handlePrevious}
         onNext={handleNext}
-        onTimeframeChange={setTimeframe}
       />
 
       {loading ? (
@@ -119,15 +114,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           </div>
         </div>
       ) : (
-        <CalendarGrid
-          currentDate={currentDate}
-          timeframe={timeframe}
-          marketData={marketData}
-          selectedDate={selectedDate}
-          selectedMetrics={selectedMetrics}
-          onCellClick={handleCellClick}
-          onCellHover={onCellHover}
-        />
+        <CalendarGrid currentDate={currentDate} marketData={marketData} />
       )}
     </div>
   );

@@ -1,13 +1,13 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { TimeFrame } from '../../types';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateTimeframe } from '../../store/marketDataSlice';
 
 interface CalendarHeaderProps {
   currentDate: Date;
-  timeframe: TimeFrame['id'];
   onPrevious: () => void;
   onNext: () => void;
-  onTimeframeChange: (timeframe: TimeFrame['id']) => void;
 }
 
 const timeframes: TimeFrame[] = [
@@ -18,11 +18,12 @@ const timeframes: TimeFrame[] = [
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   currentDate,
-  timeframe,
   onPrevious,
   onNext,
-  onTimeframeChange
 }) => {
+
+  const dispatch = useDispatch();
+  const { timeframe } = useSelector((state) => state.marketData);
   const formatHeaderDate = () => {
     if (timeframe === 'daily') {
       const options: Intl.DateTimeFormatOptions = {
@@ -39,6 +40,10 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
     } else {
       return `${currentDate.getFullYear()} - Monthly Overview`;
     }
+  };
+
+  const handleTimeChange = (newTimeframe: TimeFrame['id']) => {
+    dispatch(updateTimeframe(newTimeframe));
   };
 
   return (
@@ -69,7 +74,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         {timeframes.map((tf) => (
           <button
             key={tf.id}
-            onClick={() => onTimeframeChange(tf.id)}
+            onClick={() => handleTimeChange(tf.id)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
               timeframe === tf.id
                 ? 'bg-blue-600 text-white shadow-lg'
