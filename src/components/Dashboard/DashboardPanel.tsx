@@ -28,8 +28,8 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
           <div>
-            <h3 className="text-lg font-semibold text-white">Market Details</h3>
-            <p className="text-sm text-gray-400">
+            <h3 className="font-semibold text-white text-md md:text-lg">Market Details</h3>
+            <p className="text-xs text-gray-400 md:text-sm">
               {(() => {
                 if (!selectedDate) return '';
 
@@ -85,25 +85,25 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-gray-400">Open</p>
-                <p className="text-lg font-semibold text-white">
+                <p className="font-semibold text-white text-md md:text-lg">
                   ${data.open.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">Close</p>
-                <p className="text-lg font-semibold text-white">
+                <p className="font-semibold text-white text-md md:text-lg">
                   ${data.close.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">High</p>
-                <p className="text-lg font-semibold text-green-400">
+                <p className="font-semibold text-green-400 text-md md:text-lg">
                   ${data.high.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">Low</p>
-                <p className="text-lg font-semibold text-red-400">
+                <p className="font-semibold text-red-400 text-md md:text-lg">
                   ${data.low.toLocaleString()}
                 </p>
               </div>
@@ -130,7 +130,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                   })()}
                 </p>
                 <p
-                  className={`text-xl font-bold ${
+                  className={`text-md md:text-lg font-bold ${
                     data.performance >= 0 ? 'text-green-400' : 'text-red-400'
                   }`}
                 >
@@ -141,7 +141,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
               <div>
                 <p className="text-xs text-gray-400">Change ($)</p>
                 <p
-                  className={`text-lg font-semibold ${
+                  className={`text-md md:text-lg font-semibold ${
                     data.performance >= 0 ? 'text-green-400' : 'text-red-400'
                   }`}
                 >

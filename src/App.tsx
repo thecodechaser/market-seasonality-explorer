@@ -90,7 +90,7 @@ function App() {
   return (
     <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b md:px-12 bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
+      <header className="sticky top-0 z-40 border-b md:px-8 bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
         <div className="px-4 py-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -98,10 +98,10 @@ function App() {
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="font-bold text-white md:text-xl text-md">
                   Market Seasonality Explorer
                 </h1>
-                <p className="text-sm text-gray-400">
+                <p className="text-xs text-gray-400 md:text-sm">
                   Interactive financial market analysis platform
                 </p>
               </div>
@@ -138,7 +138,7 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="px-4 py-8 mx-auto md:mx-12 sm:px-6 lg:px-8">
+      <main className="px-4 py-8 mx-auto lg:mx-8 sm:px-6 lg:px-8">
         <FilterPanel
           filters={filters}
           onFiltersChange={setFilters}
@@ -217,14 +217,14 @@ function App() {
       />
 
       {/* Footer */}
-      <footer className="mt-16 border-t md:px-12 bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
+      <footer className="mt-16 border-t lg:px-8 bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
         <div className="px-4 py-6 mx-auto sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-400">
+          <div className="flex flex-col items-center justify-between gap-2 text-center lg:flex-row lg:text-left">
+            <p className="text-xs text-gray-400 md:text-sm">
               Market Seasonality Explorer - Real-time financial market analysis
             </p>
-            <p className="text-sm text-gray-400">
-              © {new Date().getFullYear()} Market Seasonality Explorer. All rights reserved.{' '}
+            <p className="order-3 text-xs text-gray-400 md:text-sm lg:order-none">
+              © {new Date().getFullYear()} All rights reserved.{' '}
               <a
                 href="https://thecodechaser.com"
                 target="_blank"
@@ -234,7 +234,7 @@ function App() {
                 thecodechaser.com
               </a>
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-xs text-gray-400 md:text-sm">
               Data updates every minute • {new Date().toLocaleTimeString()}
             </p>
           </div>

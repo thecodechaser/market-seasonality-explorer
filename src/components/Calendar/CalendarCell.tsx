@@ -86,6 +86,14 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
     return 'h-28';
   };
 
+  const formatNumberCompact = (num) => {
+  if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+  if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  return num.toLocaleString();
+}
+
+
   return (
     <div
       className={`
@@ -121,8 +129,11 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
         {cell.data && !isFuture && (
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className={`text-xs text-gray-300 ${timeframe !== 'daily' ? 'text-[10px]' : ''}`}>
+              <span className={`hidden md:block text-xs text-gray-300 ${timeframe !== 'daily' ? 'text-[10px]' : ''}`}>
                 ${cell.data.close.toLocaleString()}
+              </span>
+              <span className={`block md:hidden text-[10px] sm:text-xs text-gray-300 ${timeframe !== 'daily' ? 'text-[10px]' : ''}`}>
+                ${formatNumberCompact(cell.data.close)}
               </span>
               <Volume2 className="w-3 h-3 text-gray-400" />
             </div>
