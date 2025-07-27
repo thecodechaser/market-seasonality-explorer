@@ -2,19 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Calendar } from './components/Calendar/Calendar';
 import { DashboardPanel } from './components/Dashboard/DashboardPanel';
 import { FilterPanel } from './components/Controls/FilterPanel';
-import {
-  CalendarCell,
-  FilterOptions,
-  DashboardData,
-  ColorTheme,
-} from './types';
+import { CalendarCell, FilterOptions, DashboardData } from './types';
 import { BarChart3, TrendingUp } from 'lucide-react';
-import { CalendarCell as CalendarCellType } from './types';
-import { exportMarketData } from './utils/exportMarketData.ts';
-import { Footer } from './components/Footer.tsx'
+import { Footer } from './components/Footer.tsx';
+import { Legends } from './components/Legends.tsx';
 
 function App() {
-  const [exportData, setExportData] = useState<CalendarCellType[] | null>(null);
 
   const [filters, setFilters] = useState<FilterOptions>({
     symbol: 'BTC',
@@ -26,12 +19,6 @@ function App() {
     selectedDate: null,
     data: null,
     isVisible: false,
-  });
-
-  const [currentTheme, setCurrentTheme] = useState<ColorTheme>({
-    id: 'default',
-    name: 'Default',
-    colors: { low: '#10B981', medium: '#F59E0B', high: '#EF4444' },
   });
 
   const [hoveredCell, setHoveredCell] = useState<CalendarCell | null>(null);
@@ -75,17 +62,6 @@ function App() {
 
   const handleDashboardClose = () => {
     setDashboardData((prev) => ({ ...prev, isVisible: false }));
-  };
-
-  const handleExport = (format: 'csv' | 'pdf' | 'image') => {
-    exportMarketData({
-      data: exportData,
-      format,
-    });
-  };
-
-  const handleThemeChange = (theme: ColorTheme) => {
-    setCurrentTheme(theme);
   };
 
   return (
@@ -140,75 +116,21 @@ function App() {
 
       {/* Main Content */}
       <main className="px-4 py-8 mx-auto lg:mx-8 sm:px-6 lg:px-8">
-        <FilterPanel
-          filters={filters}
-          onFiltersChange={setFilters}
-          onExport={handleExport}
-          onThemeChange={handleThemeChange}
-          currentTheme={currentTheme}
-        />
+        <FilterPanel filters={filters} onFiltersChange={setFilters} />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           <div className="lg:col-span-4">
             <Calendar
               symbol={filters.symbol}
               selectedMetrics={filters.metrics}
-              currentTheme={currentTheme}
               onCellClick={handleCellClick}
               onCellHover={handleCellHover}
-              setExportData={setExportData}
             />
           </div>
         </div>
 
         {/* Legend */}
-        <div
-          className="p-4 mt-8 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50"
-          style={
-            {
-              '--color-low': currentTheme.colors.low,
-              '--color-medium': currentTheme.colors.medium,
-              '--color-high': currentTheme.colors.high,
-            } as React.CSSProperties
-          }
-        >
-          <h3 className="mb-3 text-sm font-medium text-gray-300">Legend</h3>
-          <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
-            <div className="flex items-center space-x-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: `${currentTheme.colors.low}30`,
-                  borderColor: `${currentTheme.colors.low}80`,
-                  border: '1px solid',
-                }}
-              ></div>
-              <span className="text-gray-300">Low Volatility (&lt; 2%)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: `${currentTheme.colors.medium}30`,
-                  borderColor: `${currentTheme.colors.medium}80`,
-                  border: '1px solid',
-                }}
-              ></div>
-              <span className="text-gray-300">Medium Volatility (2-4%)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: `${currentTheme.colors.high}30`,
-                  borderColor: `${currentTheme.colors.high}80`,
-                  border: '1px solid',
-                }}
-              ></div>
-              <span className="text-gray-300">High Volatility (&gt; 4%)</span>
-            </div>
-          </div>
-        </div>
+        <Legends />
       </main>
 
       {/* Dashboard Panel */}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { CalendarCell as CalendarCellType, MarketData } from '../../types';
 import { TrendingUp, TrendingDown, Volume2, AlertCircle } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 interface CalendarCellProps {
   cell: CalendarCellType;
   timeframe?: 'daily' | 'weekly' | 'monthly';
   selectedMetrics: string[];
-  currentTheme?: { colors: { low: string; medium: string; high: string } };
   onClick: (cell: CalendarCellType) => void;
   onHover: (cell: CalendarCellType | null) => void;
 }
@@ -15,10 +15,11 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
   cell,
   timeframe = 'daily',
   selectedMetrics,
-  currentTheme,
   onClick,
   onHover
 }) => {
+
+  const { currentTheme } = useSelector((state) => state.marketData);
   const today = new Date();
   today.setHours(23, 59, 59, 999);
   const isFuture = cell.date > today;

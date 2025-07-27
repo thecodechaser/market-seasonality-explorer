@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import {
   CalendarCell as CalendarCellType,
   MarketData,
   TimeFrame,
 } from '../../types';
 import { CalendarCell } from './CalendarCell';
+import { useDispatch } from 'react-redux';
+import { updateExportData } from '../../store/marketDataSlice';
 
 interface CalendarGridProps {
   currentDate: Date;
@@ -12,10 +14,8 @@ interface CalendarGridProps {
   marketData: MarketData[];
   selectedDate: Date | null;
   selectedMetrics: string[];
-  currentTheme?: { colors: { low: string; medium: string; high: string } };
   onCellClick: (cell: CalendarCellType) => void;
   onCellHover: (cell: CalendarCellType | null) => void;
-  setExportData: (data: CalendarCellType[]) => void;
 }
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({
@@ -24,11 +24,10 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   marketData,
   selectedDate,
   selectedMetrics,
-  currentTheme,
   onCellClick,
   onCellHover,
-  setExportData,
 }) => {
+  const dispatch = useDispatch();
   const cells = useMemo(() => {
     const cells: CalendarCellType[] = [];
     const today = new Date();
@@ -187,10 +186,14 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
         });
       }
     }
-
-    setExportData(cells);
+    
+    // dispatch(updateExportData(cells.map(({ date, ...rest }) => rest)));
     return cells;
   }, [currentDate, timeframe, marketData, selectedDate]);
+
+  useEffect(() => {
+  dispatch(updateExportData(cells.map(({ date, ...rest }) => rest)));
+}, [dispatch, cells]);
 
   const getGridLayout = () => {
     if (timeframe === 'daily') {
@@ -240,7 +243,6 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
             onHover={onCellHover}
             timeframe={timeframe}
             selectedMetrics={selectedMetrics}
-            currentTheme={currentTheme}
           />
         ))}
       </div>
