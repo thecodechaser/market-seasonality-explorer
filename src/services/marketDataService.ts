@@ -61,7 +61,7 @@ class MarketDataService {
     const currentDate = new Date(startDate);
     
     while (currentDate <= endDate) {
-      // Skip weekends for more realistic data
+      // Skip weekends
       if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
         const volatility = Math.random() * 5 + 1;
         const dayOfYear = this.getDayOfYear(currentDate);
@@ -156,7 +156,7 @@ class MarketDataService {
     } catch (error) {
       console.error('Failed to fetch data from Binance API:', error);
       
-      // Return fallback mock data
+      // Return fallback data
       const fallbackData = this.generateFallbackData(startDate, endDate, symbol);
       return fallbackData;
     }
@@ -198,7 +198,7 @@ class MarketDataService {
     return 'high';
   }
 
-  // Clear cache when needed
+  // Clear cache
   clearCache(): void {
     this.cache.clear();
   }

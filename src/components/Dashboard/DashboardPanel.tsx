@@ -17,8 +17,6 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
     return null;
   }
 
-  // console.log(dashboardData)
-
   const { data, selectedDate, timeframe = 'daily' } = dashboardData;
 
   return (
@@ -55,8 +53,6 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                     year: 'numeric',
                   })}`;
                 }
-
-                // Default to daily
                 return selectedDate.toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',

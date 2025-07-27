@@ -7,7 +7,7 @@ interface PriceChartProps {
 }
 
 export const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
-  // Generate mock intraday data points
+  // Generate intraday data points
   const generateIntradayData = () => {
     const points = [];
     const totalPoints = 24; // Hourly data
@@ -33,13 +33,13 @@ export const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
   const minPrice = Math.min(...intradayData.map(d => d.price));
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
-      <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center">
+    <div className="p-4 border rounded-lg bg-gray-800/50 border-gray-700/50">
+      <h4 className="flex items-center mb-3 text-sm font-medium text-gray-300">
         <BarChart3 className="w-4 h-4 mr-2" />
         Intraday Price Movement
       </h4>
       
-      <div className="h-32 relative">
+      <div className="relative h-32">
         <svg className="w-full h-full">
           {/* Price line */}
           <polyline
@@ -75,12 +75,12 @@ export const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
         <div className="absolute top-0 right-0 text-xs text-gray-400">
           ${maxPrice.toFixed(2)}
         </div>
-        <div className="absolute bottom-6 right-0 text-xs text-gray-400">
+        <div className="absolute right-0 text-xs text-gray-400 bottom-6">
           ${minPrice.toFixed(2)}
         </div>
       </div>
       
-      <div className="flex justify-between text-xs text-gray-400 mt-2">
+      <div className="flex justify-between mt-2 text-xs text-gray-400">
         <span>00:00</span>
         <span>12:00</span>
         <span>23:59</span>

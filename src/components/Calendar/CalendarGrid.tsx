@@ -54,7 +54,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
         });
       }
     } else if (timeframe === 'weekly') {
-      // Generate weekly view - show weeks of the current month
+      // Generate weekly view
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
       const firstDay = new Date(year, month, 1);
@@ -112,7 +112,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
         });
       }
     } else if (timeframe === 'monthly') {
-      // Generate monthly view - show months of the current year
+      // Generate monthly view
       const year = currentDate.getFullYear();
       
       for (let month = 0; month < 12; month++) {

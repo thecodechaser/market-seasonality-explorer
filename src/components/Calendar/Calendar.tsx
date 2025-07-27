@@ -30,7 +30,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     loadMarketData();
   }, [currentDate, symbol, timeframe]);
 
-  // Add real-time data updates for current data
+  // Add real-time data updates
   useEffect(() => {
     const interval = setInterval(async () => {
       if (timeframe === 'daily') {
@@ -99,7 +99,6 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   const handleCellClick = (cell: CalendarCellType) => {
     setSelectedDate(cell.date);
-    // Pass the cell with timeframe information
     const cellWithTimeframe = { ...cell, timeframe };
     onCellClick(cellWithTimeframe);
   };

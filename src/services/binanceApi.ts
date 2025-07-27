@@ -209,7 +209,6 @@ class BinanceApiService {
     const mean = returns.reduce((sum, ret) => sum + ret, 0) / returns.length;
     const variance = returns.reduce((sum, ret) => sum + Math.pow(ret - mean, 2), 0) / returns.length;
     
-    // Annualized volatility (assuming 365 days)
     return Math.sqrt(variance * 365) * 100;
   }
 
@@ -218,8 +217,7 @@ class BinanceApiService {
     const bidVolume = orderBook.bids.slice(0, 10).reduce((sum, [, qty]) => sum + parseFloat(qty), 0);
     const askVolume = orderBook.asks.slice(0, 10).reduce((sum, [, qty]) => sum + parseFloat(qty), 0);
     const totalVolume = bidVolume + askVolume;
-    
-    // Normalize to 0-100 scale (this is a simplified calculation)
+  
     return Math.min(totalVolume / 1000 * 100, 100);
   }
 }

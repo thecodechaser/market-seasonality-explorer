@@ -28,10 +28,9 @@ function App() {
 
   const [hoveredCell, setHoveredCell] = useState<CalendarCell | null>(null);
 
-  // Add click outside handler
+ // Close dashboard if clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Close dashboard if clicking outside
       if (dashboardData.isVisible) {
         const dashboardElement = document.querySelector('[data-dashboard-panel]');
         if (dashboardElement && !dashboardElement.contains(event.target as Node)) {
@@ -78,7 +77,6 @@ function App() {
       // Create CSV content
       const csvContent = [
         'Date,Symbol,Open,High,Low,Close,Volume,Volatility,Liquidity,Performance',
-        // Add sample data row
         `${new Date().toISOString().split('T')[0]},${filters.symbol},45000,46000,44000,45500,1000000,2.5,75.0,1.11`
       ].join('\n');
       
@@ -158,10 +156,10 @@ this would contain detailed market analysis and charts.`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 text-white">
+    <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900">
       {/* Header */}
-      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-40 border-b bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
+        <div className="px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-blue-600 rounded-lg">
@@ -181,9 +179,9 @@ this would contain detailed market analysis and charts.`;
               </div>
               
               {hoveredCell && hoveredCell.data && (
-                <div className="hidden md:flex items-center space-x-4 text-sm bg-gray-800/50 rounded-lg px-4 py-2">
+                <div className="items-center hidden px-4 py-2 space-x-4 text-sm rounded-lg md:flex bg-gray-800/50">
                   <span className="text-gray-400">Quick View:</span>
-                  <span className="text-white font-medium">
+                  <span className="font-medium text-white">
                     ${hoveredCell.data.close.toLocaleString()}
                   </span>
                   <span className={`font-medium ${
@@ -199,7 +197,7 @@ this would contain detailed market analysis and charts.`;
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <FilterPanel
           filters={filters}
           onFiltersChange={setFilters}
@@ -208,7 +206,7 @@ this would contain detailed market analysis and charts.`;
           currentTheme={currentTheme}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           <div className="lg:col-span-4">
             <Calendar
               symbol={filters.symbol}
@@ -221,13 +219,13 @@ this would contain detailed market analysis and charts.`;
         </div>
 
         {/* Legend */}
-        <div className="mt-8 bg-gray-900/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50" style={{
+        <div className="p-4 mt-8 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50" style={{
           '--color-low': currentTheme.colors.low,
           '--color-medium': currentTheme.colors.medium,
           '--color-high': currentTheme.colors.high
         } as React.CSSProperties}>
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Legend</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <h3 className="mb-3 text-sm font-medium text-gray-300">Legend</h3>
+          <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 rounded" style={{ 
                 backgroundColor: `${currentTheme.colors.low}30`, 
@@ -263,8 +261,8 @@ this would contain detailed market analysis and charts.`;
       />
 
       {/* Footer */}
-      <footer className="bg-gray-900/50 backdrop-blur-sm border-t border-gray-700/50 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <footer className="mt-16 border-t bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
+        <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-400">
               Market Seasonality Explorer - Real-time financial market analysis
