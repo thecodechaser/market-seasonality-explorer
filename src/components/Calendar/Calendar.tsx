@@ -8,6 +8,7 @@ interface CalendarProps {
   symbol: string;
   selectedMetrics: string[];
   currentTheme?: { colors: { low: string; medium: string; high: string } };
+  setExportData: (data: CalendarCellType[]) => void;
   onCellClick: (cell: CalendarCellType) => void;
   onCellHover: (cell: CalendarCellType | null) => void;
   onTimeframeChange?: (timeframe: 'daily' | 'weekly' | 'monthly') => void;
@@ -18,7 +19,8 @@ export const Calendar: React.FC<CalendarProps> = ({
   selectedMetrics,
   currentTheme,
   onCellClick,
-  onCellHover
+  onCellHover,
+  setExportData
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [timeframe, setTimeframe] = useState<TimeFrame['id']>('daily');
@@ -130,6 +132,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           currentTheme={currentTheme}
           onCellClick={handleCellClick}
           onCellHover={onCellHover}
+          setExportData={setExportData}
         />
       )}
     </div>
