@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Filter,
   Download,
@@ -9,52 +9,34 @@ import {
   Image,
   FileSpreadsheet,
 } from 'lucide-react';
-import { FilterOptions, ColorTheme } from '../../types';
-import { binanceApi, BinanceSymbol } from '../../services/binanceApi';
+import { FilterOptions, BinanceSymbol } from '../../types';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateCurrentTheme } from '../../store/marketDataSlice';
+import { updateCurrentTheme, updateFilters } from '../../store/marketDataSlice';
 import { exportMarketData } from '../../utils/exportMarketData.ts';
+import { metrics, colorThemes } from '../../config/metricsConfig';
+import { loadSymbols } from '../../store/marketDataThunks';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
-interface FilterPanelProps {
-  filters: FilterOptions;
-  onFiltersChange: (filters: FilterOptions) => void;
-}
-
-const metrics = ['Volatility', 'Liquidity', 'Performance', 'Volume'];
-
-const colorThemes: ColorTheme[] = [
-  {
-    id: 'default',
-    name: 'Default',
-    colors: { low: '#10B981', medium: '#F59E0B', high: '#EF4444' },
-  },
-  {
-    id: 'colorblind',
-    name: 'Colorblind Friendly',
-    colors: { low: '#3B82F6', medium: '#8B5CF6', high: '#EC4899' },
-  },
-  {
-    id: 'dark',
-    name: 'High Contrast',
-    colors: { low: '#06B6D4', medium: '#F97316', high: '#DC2626' },
-  },
-];
-
-export const FilterPanel: React.FC<FilterPanelProps> = ({
-  filters,
-  onFiltersChange,
-}) => {
+export const FilterPanel = ({}) => {
   const dispatch = useDispatch();
-  const { currentTheme, exportData } = useSelector((state) => state.marketData);
-
-  const [symbols, setSymbols] = useState<BinanceSymbol[]>([]);
+  const { currentTheme, exportData, filters, symbols } = useSelector(
+    (state) => state.marketData
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [showSymbolSearch, setShowSymbolSearch] = useState(false);
   const [filteredSymbols, setFilteredSymbols] = useState<BinanceSymbol[]>([]);
   const [showExportMenu, setShowExportMenu] = useState(false);
 
+  const symbolRef = useRef<HTMLDivElement>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside([symbolRef.current, exportRef.current], () => {
+    setShowSymbolSearch(false);
+    setShowExportMenu(false);
+  });
+  
   useEffect(() => {
-    loadSymbols();
+    dispatch(loadSymbols());
   }, []);
 
   useEffect(() => {
@@ -74,96 +56,16 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     }
   }, [searchQuery, symbols]);
 
-  // Add click outside handler
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const symbolDropdown = document.querySelector('[data-symbol-dropdown]');
-      const exportDropdown = document.querySelector('[data-export-dropdown]');
-
-      if (
-        showSymbolSearch &&
-        symbolDropdown &&
-        !symbolDropdown.contains(event.target as Node)
-      ) {
-        setShowSymbolSearch(false);
-      }
-
-      if (
-        showExportMenu &&
-        exportDropdown &&
-        !exportDropdown.contains(event.target as Node)
-      ) {
-        setShowExportMenu(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showSymbolSearch, showExportMenu]);
-
-  const loadSymbols = async () => {
-    try {
-      const allSymbols = await binanceApi.getAllSymbols();
-      // Sort by popularity (volume) and take top symbols
-      const popularSymbols = allSymbols
-        .filter((s) =>
-          [
-            'BTC',
-            'ETH',
-            'BNB',
-            'ADA',
-            'SOL',
-            'DOT',
-            'MATIC',
-            'AVAX',
-            'LINK',
-            'UNI',
-          ].includes(s.baseAsset)
-        )
-        .concat(
-          allSymbols.filter(
-            (s) =>
-              ![
-                'BTC',
-                'ETH',
-                'BNB',
-                'ADA',
-                'SOL',
-                'DOT',
-                'MATIC',
-                'AVAX',
-                'LINK',
-                'UNI',
-              ].includes(s.baseAsset)
-          )
-        )
-        .slice(0, 100);
-
-      setSymbols(popularSymbols);
-      setFilteredSymbols(popularSymbols.slice(0, 20));
-    } catch (error) {
-      console.error('Failed to load symbols:', error);
-      // Fallback to default symbols
-      const fallbackSymbols = [
-        { symbol: 'BTCUSDT', baseAsset: 'BTC', quoteAsset: 'USDT' },
-        { symbol: 'ETHUSDT', baseAsset: 'ETH', quoteAsset: 'USDT' },
-        { symbol: 'ADAUSDT', baseAsset: 'ADA', quoteAsset: 'USDT' },
-        { symbol: 'SOLUSDT', baseAsset: 'SOL', quoteAsset: 'USDT' },
-        { symbol: 'DOTUSDT', baseAsset: 'DOT', quoteAsset: 'USDT' },
-      ] as BinanceSymbol[];
-      setSymbols(fallbackSymbols);
-      setFilteredSymbols(fallbackSymbols);
-    }
-  };
-
   const handleExportOption = (format: 'pdf' | 'csv' | 'image') => {
     setShowExportMenu(false);
     exportMarketData({
       data: exportData,
       format,
     });
+  };
+
+  const handleFilterChange = (newFilters: FilterOptions) => {
+    dispatch(updateFilters(newFilters));
   };
 
   return (
@@ -175,7 +77,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         </h3>
 
         <div className="relative flex space-x-2">
-          <div className="relative" data-export-dropdown>
+          <div className="relative" data-export-dropdown ref={exportRef}>
             <button
               onClick={() => setShowExportMenu(!showExportMenu)}
               className="flex items-center px-4 py-2 space-x-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
@@ -215,7 +117,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {/* Symbol Selection */}
-        <div className="relative z-[100]" data-symbol-dropdown>
+        <div className="relative z-[100]" data-symbol-dropdown ref={symbolRef}>
           <label className="block mb-2 text-sm font-medium text-gray-300">
             Symbol
           </label>
@@ -246,8 +148,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     <button
                       key={symbol.symbol}
                       onClick={() => {
-                        onFiltersChange({
-                          ...filters,
+                        handleFilterChange({
                           symbol: symbol.baseAsset,
                         });
                         setShowSymbolSearch(false);
@@ -287,7 +188,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     const newMetrics = e.target.checked
                       ? [...filters.metrics, metric]
                       : filters.metrics.filter((m) => m !== metric);
-                    onFiltersChange({ ...filters, metrics: newMetrics });
+                    handleFilterChange({ metrics: newMetrics });
                   }}
                   className="mr-2 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
                 />

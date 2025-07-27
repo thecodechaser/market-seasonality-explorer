@@ -1,40 +1,58 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import { X, TrendingUp, TrendingDown, BarChart3, Activity } from 'lucide-react';
-import { DashboardData } from '../../types';
 import { PriceChart } from './PriceChart';
 import { MetricsGrid } from './MetricsGrid';
+import { updateDashboardData } from '../../store/marketDataSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
-interface DashboardPanelProps {
-  dashboardData: DashboardData;
-  onClose: () => void;
-}
+export const DashboardPanel = () => {
+  const dispatch = useDispatch();
+  const { dashboardData } = useSelector((state) => state.marketData);
 
-export const DashboardPanel: React.FC<DashboardPanelProps> = ({
-  dashboardData,
-  onClose,
-}) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const { data, selectedDate, timeframe = 'daily' } = dashboardData;
+
+  useClickOutside(
+    [panelRef.current],
+    () => {
+      if (dashboardData.isVisible) {
+        handleClose();
+      }
+    },
+    dashboardData.isVisible
+  );
+
   if (!dashboardData.isVisible || !dashboardData.data) {
     return null;
   }
 
-  const { data, selectedDate, timeframe = 'daily' } = dashboardData;
+  const handleClose = () => {
+    dispatch(updateDashboardData({ isVisible: false }));
+  };
+
+  const parsedDate = new Date(selectedDate);
 
   return (
     <div
       className="fixed inset-y-0 right-0 w-96 bg-gray-900/95 backdrop-blur-sm border-l border-gray-700/50 shadow-2xl z-[150] transform transition-transform"
       data-dashboard-panel
+      ref={panelRef}
     >
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
           <div>
-            <h3 className="font-semibold text-white text-md md:text-lg">Market Details</h3>
+            <h3 className="font-semibold text-white text-md md:text-lg">
+              Market Details
+            </h3>
             <p className="text-xs text-gray-400 md:text-sm">
               {(() => {
-                if (!selectedDate) return '';
+                if (!parsedDate) return '';
 
                 if (timeframe === 'monthly') {
-                  return `Month: ${selectedDate.toLocaleDateString('en-US', {
+                  return `Month: ${parsedDate.toLocaleDateString('en-US', {
                     month: 'long',
                     year: 'numeric',
                   })}`;
@@ -53,7 +71,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                     year: 'numeric',
                   })}`;
                 }
-                return selectedDate.toLocaleDateString('en-US', {
+                return parsedDate.toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -63,7 +81,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 text-gray-400 transition-colors rounded-lg hover:bg-white/10 hover:text-white"
           >
             <X className="w-5 h-5" />
@@ -210,10 +228,10 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
           </div>
 
           {/* Mini Price Chart */}
-          <PriceChart data={data} />
+          <PriceChart />
 
           {/* Additional Metrics */}
-          <MetricsGrid data={data} />
+          <MetricsGrid />
         </div>
       </div>
     </div>

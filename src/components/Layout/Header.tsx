@@ -1,0 +1,55 @@
+import { BarChart3, TrendingUp } from 'lucide-react';
+import { useSelector } from 'react-redux';
+
+export const Header = () => {
+  const { hoveredCell } = useSelector((state) => state.marketData);
+
+  return (
+    <header className="sticky top-0 z-40 border-b md:px-8 bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
+      <div className="px-4 py-4 mx-auto sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-blue-600 rounded-lg">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="font-bold text-white md:text-xl text-md">
+                Market Seasonality Explorer
+              </h1>
+              <p className="text-xs text-gray-400 md:text-sm">
+                Interactive financial market analysis platform
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-sm">
+              <TrendingUp className="w-4 h-4 text-green-400" />
+              <span className="text-gray-300">Binance API</span>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            </div>
+
+            {hoveredCell && hoveredCell.data && (
+              <div className="items-center hidden px-4 py-2 space-x-4 text-sm rounded-lg md:flex bg-gray-800/50">
+                <span className="text-gray-400">Quick View:</span>
+                <span className="font-medium text-white">
+                  ${hoveredCell.data.close.toLocaleString()}
+                </span>
+                <span
+                  className={`font-medium ${
+                    hoveredCell.data.performance >= 0
+                      ? 'text-green-400'
+                      : 'text-red-400'
+                  }`}
+                >
+                  {hoveredCell.data.performance >= 0 ? '+' : ''}
+                  {hoveredCell.data.performance}%
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};

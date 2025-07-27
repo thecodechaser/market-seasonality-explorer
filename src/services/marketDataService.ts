@@ -1,5 +1,5 @@
-import { MarketData } from '../types';
-import { binanceApi, BinanceKlineData } from './binanceApi';
+import { MarketData, BinanceKlineData } from '../types';
+import { binanceApi } from './binanceApi';
 
 class MarketDataService {
   private cache = new Map<string, { data: MarketData[]; timestamp: number }>();
