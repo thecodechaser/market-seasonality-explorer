@@ -5,6 +5,7 @@ import {
   ColorTheme,
   TimeFrame,
   CalendarCell as CalendarCellType,
+  BinanceSymbol
 } from '../types';
 
 const initialState: {
@@ -15,6 +16,10 @@ const initialState: {
   selectedDate: Date | null;
   timeframe: TimeFrame['id'];
   filters: FilterOptions;
+  marketData: [];
+  loading: boolean;
+  currentDate: Date | null;
+  symbols: BinanceSymbol[];
 } = {
   currentTheme: {
     id: 'default',
@@ -34,7 +39,11 @@ const initialState: {
     symbol: 'BTC',
     timeframe: 'daily',
     metrics: ['Volatility', 'Liquidity', 'Performance', 'Volume'],
-  }
+  },
+  marketData: [],
+  loading: false,
+  currentDate: null,
+  symbols: [],
 };
 
 const marketDataSlice = createSlice({
@@ -67,7 +76,19 @@ const marketDataSlice = createSlice({
         ...state.filters,
         ...action.payload,
       };
-    }
+    },
+    updateMarketData: (state, action) => {
+      state.marketData = action.payload;
+    },
+    updateLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    updateCurrentDate: (state, action) => {
+      state.currentDate = action.payload;
+    },
+    updateSymbolList: (state, action) => {
+      state.symbols = action.payload;
+    },
   },
 });
 
@@ -78,7 +99,11 @@ export const {
   updateDashboardData,
   updateSelectedDate,
   updateTimeframe,
-  updateFilters
+  updateFilters,
+  updateMarketData,
+  updateLoading,
+  updateCurrentDate,
+  updateSymbolList
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;

@@ -1,19 +1,32 @@
+import React, { useRef } from 'react';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import { X, TrendingUp, TrendingDown, BarChart3, Activity } from 'lucide-react';
 import { PriceChart } from './PriceChart';
 import { MetricsGrid } from './MetricsGrid';
 import { updateDashboardData } from '../../store/marketDataSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
-export const DashboardPanel = ({
-}) => {
+export const DashboardPanel = () => {
   const dispatch = useDispatch();
   const { dashboardData } = useSelector((state) => state.marketData);
-  
+
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const { data, selectedDate, timeframe = 'daily' } = dashboardData;
+
+  useClickOutside(
+    [panelRef.current],
+    () => {
+      if (dashboardData.isVisible) {
+        handleClose();
+      }
+    },
+    dashboardData.isVisible
+  );
+
   if (!dashboardData.isVisible || !dashboardData.data) {
     return null;
   }
-
-  const { data, selectedDate, timeframe = 'daily' } = dashboardData;
 
   const handleClose = () => {
     dispatch(updateDashboardData({ isVisible: false }));
@@ -25,12 +38,15 @@ export const DashboardPanel = ({
     <div
       className="fixed inset-y-0 right-0 w-96 bg-gray-900/95 backdrop-blur-sm border-l border-gray-700/50 shadow-2xl z-[150] transform transition-transform"
       data-dashboard-panel
+      ref={panelRef}
     >
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
           <div>
-            <h3 className="font-semibold text-white text-md md:text-lg">Market Details</h3>
+            <h3 className="font-semibold text-white text-md md:text-lg">
+              Market Details
+            </h3>
             <p className="text-xs text-gray-400 md:text-sm">
               {(() => {
                 if (!parsedDate) return '';
@@ -212,10 +228,10 @@ export const DashboardPanel = ({
           </div>
 
           {/* Mini Price Chart */}
-          <PriceChart data={data} />
+          <PriceChart />
 
           {/* Additional Metrics */}
-          <MetricsGrid data={data} />
+          <MetricsGrid />
         </div>
       </div>
     </div>

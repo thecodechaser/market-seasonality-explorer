@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarCell as CalendarCellType, MarketData } from '../../types';
+import { CalendarCell as CalendarCellType } from '../../types';
 import { TrendingUp, TrendingDown, Volume2, AlertCircle } from 'lucide-react';
 import {
   updateHoveredCell,
@@ -7,38 +7,27 @@ import {
   updateSelectedDate,
 } from '../../store/marketDataSlice';
 import { useSelector, useDispatch } from 'react-redux';
+import {
+  getCellContent,
+  getCellHeight,
+  formatNumberCompact,
+  getWeekRangeString,
+} from '../../utils/calenderHelpers';
 
 interface CalendarCellProps {
   cell: CalendarCellType;
 }
 
-export const CalendarCell: React.FC<CalendarCellProps> = ({
-  cell,
-}) => {
+export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
   const dispatch = useDispatch();
 
-  const { currentTheme, timeframe, filters } = useSelector((state) => state.marketData);
+  const { currentTheme, timeframe, filters } = useSelector(
+    (state) => state.marketData
+  );
   const today = new Date();
   today.setHours(23, 59, 59, 999);
   const isFuture = cell.date > today;
   const selectedMetrics = filters.metrics || [];
-
-  // const getVolatilityColor = (data?: MarketData) => {
-  //   if (!data || isFuture) return 'bg-gray-800/20';
-  //   if (!selectedMetrics.includes('Volatility')) return 'bg-gray-700/30';
-
-  //   if (currentTheme) {
-  //     const volatility = data.volatility;
-  //     if (volatility < 2) return `border` + ` border-opacity-50`;
-  //     if (volatility < 4) return `border` + ` border-opacity-50`;
-  //     return `border` + ` border-opacity-50`;
-  //   }
-
-  //   const volatility = data.volatility;
-  //   if (volatility < 2) return 'bg-green-500/30 border-green-500/50';
-  //   if (volatility < 4) return 'bg-yellow-500/30 border-yellow-500/50';
-  //   return 'bg-red-500/30 border-red-500/50';
-  // };
 
   const getPerformanceIndicator = (performance?: number) => {
     if (!selectedMetrics.includes('Performance')) return null;
@@ -67,32 +56,6 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
     );
   };
 
-  const getCellContent = () => {
-    if (timeframe === 'daily') {
-      return cell.date.getDate();
-    } else if (timeframe === 'weekly') {
-      const weekStart = cell.date;
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      return `${weekStart.getDate()}-${weekEnd.getDate()}`;
-    } else {
-      return cell.date.toLocaleDateString('en-US', { month: 'short' });
-    }
-  };
-
-  const getCellHeight = () => {
-    if (timeframe === 'daily') return 'h-20';
-    if (timeframe === 'weekly') return 'h-24';
-    return 'h-28';
-  };
-
-  const formatNumberCompact = (num) => {
-    if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-    if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-    if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
-    return num.toLocaleString();
-  };
-
   const handleHoveredCell = (cell: CalendarCellType | null) =>
     dispatch(
       cell
@@ -117,7 +80,9 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
   return (
     <div
       className={`
-        relative ${getCellHeight()} border rounded-lg transition-all duration-200 group
+        relative ${getCellHeight(
+          timeframe
+        )} border rounded-lg transition-all duration-200 group
         ${isFuture ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
         ${cell.isToday ? 'ring-2 ring-blue-400' : 'border-gray-700/50'}
         ${cell.isSelected ? 'ring-2 ring-white' : ''}
@@ -160,7 +125,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
                 : 'text-white'
             }`}
           >
-            {getCellContent()}
+            {getCellContent(timeframe, cell.date)}
           </span>
           {getPerformanceIndicator(cell.data?.performance)}
         </div>
@@ -225,17 +190,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
                 {timeframe === 'daily'
                   ? cell.date.toLocaleDateString()
                   : timeframe === 'weekly'
-                  ? (() => {
-                      const weekEnd = new Date(cell.date);
-                      weekEnd.setDate(cell.date.getDate() + 6);
-                      return `${cell.date.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })} - ${weekEnd.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}`;
-                    })()
+                  ? getWeekRangeString(cell.date)
                   : cell.date.toLocaleDateString('en-US', {
                       month: 'long',
                       year: 'numeric',
