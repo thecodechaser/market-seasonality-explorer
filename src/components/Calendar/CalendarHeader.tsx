@@ -42,7 +42,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between mb-6 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+    <div className="flex items-center justify-between p-4 mb-6 border rounded-lg bg-white/5 border-white/10">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
           <CalendarIcon className="w-5 h-5 text-blue-400" />
@@ -52,20 +52,20 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={onPrevious}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
+            className="p-2 text-gray-300 transition-colors rounded-lg hover:bg-white/10 hover:text-white"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={onNext}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
+            className="p-2 text-gray-300 transition-colors rounded-lg hover:bg-white/10 hover:text-white"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      <div className="flex bg-gray-800/50 rounded-lg p-1">
+      <div className="flex p-1 rounded-lg bg-gray-800/50">
         {timeframes.map((tf) => (
           <button
             key={tf.id}

@@ -49,7 +49,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           data,
           isToday: date.getTime() === today.getTime(),
           isSelected: selectedDate ? date.getTime() === selectedDate.getTime() : false,
-          isInRange: false
+          isInRange: false,
+          timeframe: 'daily'
         });
       }
     } else if (timeframe === 'weekly') {
@@ -106,7 +107,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           isToday: isCurrentWeek,
           isSelected: selectedDate ? 
             (selectedDate >= weekStart && selectedDate <= weekEnd) : false,
-          isInRange: false
+          isInRange: false,
+          timeframe: 'weekly'
         });
       }
     } else if (timeframe === 'monthly') {
@@ -153,7 +155,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           isToday: isCurrentMonth,
           isSelected: selectedDate ? 
             (selectedDate.getMonth() === month && selectedDate.getFullYear() === year) : false,
-          isInRange: false
+          isInRange: false,
+          timeframe: 'monthly'
         });
       }
     }
@@ -184,12 +187,12 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   const headers = getHeaders();
 
   return (
-    <div className="bg-gray-900/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50">
+    <div className="p-4 border rounded-lg bg-gray-900/50 border-gray-700/50">
       {/* Headers */}
       {timeframe === 'daily' && (
         <div className="grid grid-cols-7 gap-2 mb-4">
           {headers.map((header) => (
-            <div key={header} className="text-center text-sm font-medium text-gray-400 py-2">
+            <div key={header} className="py-2 text-sm font-medium text-center text-gray-400">
               {header}
             </div>
           ))}

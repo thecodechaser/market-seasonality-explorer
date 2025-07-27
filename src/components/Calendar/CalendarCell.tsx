@@ -61,7 +61,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
     const opacity = Math.min(liquidity / 100, 1);
     return (
       <div 
-        className="absolute bottom-1 left-1 w-1 h-1 bg-blue-400 rounded-full"
+        className="absolute w-1 h-1 bg-blue-400 rounded-full bottom-1 left-1"
         style={{ opacity }}
       />
     );
@@ -108,8 +108,8 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
       onMouseEnter={() => onHover(cell)}
       onMouseLeave={() => onHover(null)}
     >
-      <div className="p-2 h-full flex flex-col justify-between">
-        <div className="flex justify-between items-start">
+      <div className="flex flex-col justify-between h-full p-2">
+        <div className="flex items-start justify-between">
           <span className={`text-sm font-medium ${
             cell.isToday ? 'text-blue-400' : isFuture ? 'text-gray-500' : 'text-white'
           }`}>
@@ -127,9 +127,9 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
               <Volume2 className="w-3 h-3 text-gray-400" />
             </div>
             {selectedMetrics.includes('Volume') && (
-              <div className="w-full bg-gray-700/50 rounded-full h-1">
+              <div className="w-full h-1 rounded-full bg-gray-700/50">
                 <div 
-                  className="bg-blue-400 h-1 rounded-full transition-all"
+                  className="h-1 transition-all bg-blue-400 rounded-full"
                   style={{ width: `${Math.min(cell.data.volatility / 6 * 100, 100)}%` }}
                 />
               </div>
@@ -142,9 +142,9 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
       
       {/* Tooltip on hover */}
       {isFuture ? (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[200]">
-          <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-xl border border-gray-700 min-w-48">
-            <div className="flex items-center space-x-2 text-yellow-400 mb-2">
+        <div className="absolute mb-2 transition-opacity transform -translate-x-1/2 opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100">
+          <div className="p-3 text-xs text-white bg-gray-900 border border-gray-700 rounded-lg shadow-xl min-w-48">
+            <div className="flex items-center mb-2 space-x-2 text-yellow-400">
               <AlertCircle className="w-4 h-4" />
               <span className="font-semibold">Future Date</span>
             </div>
@@ -154,9 +154,9 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
           </div>
         </div>
       ) : cell.data && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[200]">
-          <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-xl border border-gray-700 min-w-48">
-            <div className="font-semibold mb-2">
+        <div className="absolute mb-2 transition-opacity transform -translate-x-1/2 opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100">
+          <div className="p-3 text-xs text-white bg-gray-900 border border-gray-700 rounded-lg shadow-xl min-w-48">
+            <div className="mb-2 font-semibold">
               {timeframe === 'daily' ? cell.date.toLocaleDateString() :
                timeframe === 'weekly' ? (() => {
                  const weekEnd = new Date(cell.date);
@@ -164,7 +164,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({
                  return `${cell.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
                })() :
                cell.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-              <div className="text-xs text-gray-400 mt-1">Real Binance Data</div>
+              <div className="mt-1 text-xs text-gray-400">Real Binance Data</div>
             </div>
             <div className="space-y-1">
               <div className="flex justify-between">

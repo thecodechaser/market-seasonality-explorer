@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar } from './components/Calendar/Calendar';
 import { DashboardPanel } from './components/Dashboard/DashboardPanel';
 import { FilterPanel } from './components/Controls/FilterPanel';
@@ -6,6 +6,8 @@ import { CalendarCell, FilterOptions, DashboardData, ColorTheme } from './types'
 import { BarChart3, TrendingUp } from 'lucide-react';
 
 function App() {
+  const [timeframe, setTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+
   const [filters, setFilters] = useState<FilterOptions>({
     symbol: 'BTC',
     timeframe: 'daily',
@@ -26,12 +28,31 @@ function App() {
 
   const [hoveredCell, setHoveredCell] = useState<CalendarCell | null>(null);
 
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Close dashboard if clicking outside
+      if (dashboardData.isVisible) {
+        const dashboardElement = document.querySelector('[data-dashboard-panel]');
+        if (dashboardElement && !dashboardElement.contains(event.target as Node)) {
+          handleDashboardClose();
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dashboardData.isVisible]);
+
   const handleCellClick = (cell: CalendarCell) => {
     if (cell.data) {
       setDashboardData({
         selectedDate: cell.date,
         data: cell.data,
-        isVisible: true
+        isVisible: true,
+        timeframe: cell.timeframe || 'daily'
       });
     }
   };
@@ -44,34 +65,96 @@ function App() {
     setDashboardData(prev => ({ ...prev, isVisible: false }));
   };
 
-  const handleExport = () => {
-    // Export functionality
+  const handleExport = (format: 'pdf' | 'csv' | 'image') => {
     const exportData = {
       filters,
       theme: currentTheme,
       exportDate: new Date().toISOString()
     };
-    
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: 'application/json'
-    });
-    
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `market-data-${filters.symbol}-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+
+    const filename = `market-data-${filters.symbol}-${new Date().toISOString().split('T')[0]}`;
+
+    if (format === 'csv') {
+      // Create CSV content
+      const csvContent = [
+        'Date,Symbol,Open,High,Low,Close,Volume,Volatility,Liquidity,Performance',
+        // Add sample data row
+        `${new Date().toISOString().split('T')[0]},${filters.symbol},45000,46000,44000,45500,1000000,2.5,75.0,1.11`
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else if (format === 'pdf') {
+      // Create PDF content (simplified)
+      const pdfContent = `Market Seasonality Report
+Symbol: ${filters.symbol}
+Date: ${new Date().toLocaleDateString()}
+Timeframe: ${filters.timeframe}
+Selected Metrics: ${filters.metrics.join(', ')}
+Theme: ${currentTheme.name}
+
+This is a sample PDF export. In a production environment, 
+this would contain detailed market analysis and charts.`;
+      
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else if (format === 'image') {
+      // Create canvas and export as image
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800;
+      canvas.height = 600;
+      
+      if (ctx) {
+        // Draw background
+        ctx.fillStyle = '#1F2937';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw title
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '24px Arial';
+        ctx.fillText('Market Seasonality Explorer', 50, 50);
+        
+        // Draw symbol
+        ctx.font = '18px Arial';
+        ctx.fillText(`Symbol: ${filters.symbol}`, 50, 100);
+        
+        // Draw date
+        ctx.fillText(`Date: ${new Date().toLocaleDateString()}`, 50, 130);
+        
+        // Convert to blob and download
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }
+        });
+      }
+    }
   };
 
   const handleThemeChange = (theme: ColorTheme) => {
     setCurrentTheme(theme);
-    // Apply theme colors to CSS variables
-    document.documentElement.style.setProperty('--color-low', theme.colors.low);
-    document.documentElement.style.setProperty('--color-medium', theme.colors.medium);
-    document.documentElement.style.setProperty('--color-high', theme.colors.high);
   };
 
   return (
@@ -93,7 +176,7 @@ function App() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm">
                 <TrendingUp className="w-4 h-4 text-green-400" />
-                <span className="text-gray-300">Live Data</span>
+                <span className="text-gray-300">Binance API</span>
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               </div>
               
@@ -122,12 +205,15 @@ function App() {
           onFiltersChange={setFilters}
           onExport={handleExport}
           onThemeChange={handleThemeChange}
+          currentTheme={currentTheme}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-4">
             <Calendar
               symbol={filters.symbol}
+              selectedMetrics={filters.metrics}
+              currentTheme={currentTheme}
               onCellClick={handleCellClick}
               onCellHover={handleCellHover}
             />
@@ -135,19 +221,35 @@ function App() {
         </div>
 
         {/* Legend */}
-        <div className="mt-8 bg-gray-900/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50">
+        <div className="mt-8 bg-gray-900/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50" style={{
+          '--color-low': currentTheme.colors.low,
+          '--color-medium': currentTheme.colors.medium,
+          '--color-high': currentTheme.colors.high
+        } as React.CSSProperties}>
           <h3 className="text-sm font-medium text-gray-300 mb-3">Legend</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-500/30 border border-green-500/50 rounded"></div>
+              <div className="w-4 h-4 rounded" style={{ 
+                backgroundColor: `${currentTheme.colors.low}30`, 
+                borderColor: `${currentTheme.colors.low}80`,
+                border: '1px solid'
+              }}></div>
               <span className="text-gray-300">Low Volatility (&lt; 2%)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-yellow-500/30 border border-yellow-500/50 rounded"></div>
+              <div className="w-4 h-4 rounded" style={{ 
+                backgroundColor: `${currentTheme.colors.medium}30`, 
+                borderColor: `${currentTheme.colors.medium}80`,
+                border: '1px solid'
+              }}></div>
               <span className="text-gray-300">Medium Volatility (2-4%)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-500/30 border border-red-500/50 rounded"></div>
+              <div className="w-4 h-4 rounded" style={{ 
+                backgroundColor: `${currentTheme.colors.high}30`, 
+                borderColor: `${currentTheme.colors.high}80`,
+                border: '1px solid'
+              }}></div>
               <span className="text-gray-300">High Volatility (&gt; 4%)</span>
             </div>
           </div>

@@ -113,18 +113,18 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   };
 
   return (
-    <div className="bg-gray-900/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50 mb-6">
+    <div className="p-4 mb-6 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white flex items-center">
+        <h3 className="flex items-center text-lg font-semibold text-white">
           <Filter className="w-5 h-5 mr-2" />
           Filters & Controls
         </h3>
         
-        <div className="flex space-x-2 relative">
+        <div className="relative flex space-x-2">
           <div className="relative" data-export-dropdown>
           <button
               onClick={() => setShowExportMenu(!showExportMenu)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="flex items-center px-4 py-2 space-x-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             <Download className="w-4 h-4" />
             <span>Export</span>
@@ -134,21 +134,21 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl z-[100]">
                 <button
                   onClick={() => handleExportOption('pdf')}
-                  className="w-full flex items-center space-x-2 px-4 py-2 text-left text-white hover:bg-gray-700 rounded-t-lg transition-colors"
+                  className="flex items-center w-full px-4 py-2 space-x-2 text-left text-white transition-colors rounded-t-lg hover:bg-gray-700"
                 >
                   <FileText className="w-4 h-4" />
                   <span>Export as PDF</span>
                 </button>
                 <button
                   onClick={() => handleExportOption('csv')}
-                  className="w-full flex items-center space-x-2 px-4 py-2 text-left text-white hover:bg-gray-700 transition-colors"
+                  className="flex items-center w-full px-4 py-2 space-x-2 text-left text-white transition-colors hover:bg-gray-700"
                 >
                   <FileSpreadsheet className="w-4 h-4" />
                   <span>Export as CSV</span>
                 </button>
                 <button
                   onClick={() => handleExportOption('image')}
-                  className="w-full flex items-center space-x-2 px-4 py-2 text-left text-white hover:bg-gray-700 rounded-b-lg transition-colors"
+                  className="flex items-center w-full px-4 py-2 space-x-2 text-left text-white transition-colors rounded-b-lg hover:bg-gray-700"
                 >
                   <Image className="w-4 h-4" />
                   <span>Export as Image</span>
@@ -159,14 +159,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {/* Symbol Selection */}
-        <div className="relative" data-symbol-dropdown>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Symbol</label>
+        <div className="relative z-[100]" data-symbol-dropdown>
+          <label className="block mb-2 text-sm font-medium text-gray-300">Symbol</label>
           <div className="relative">
             <button
               onClick={() => setShowSymbolSearch(!showSymbolSearch)}
-            className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-white bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <div className="flex items-center justify-between">
                 <span>{filters.symbol}</span>
@@ -175,17 +175,17 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             </button>
             
             {showSymbolSearch && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800/95 backdrop-blur-sm border border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-hidden">
+              <div className="absolute left-0 right-0 mt-1 overflow-hidden border border-gray-600 rounded-lg shadow-xl top-full bg-gray-800/95 backdrop-blur-sm max-h-64">
                 <div className="p-2 border-b border-gray-700">
                   <input
                     type="text"
                     placeholder="Search symbols..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 text-sm text-white bg-gray-700 border border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div className="max-h-48 overflow-y-auto">
+                <div className="overflow-y-auto max-h-48">
                   {filteredSymbols.map(symbol => (
                     <button
                       key={symbol.symbol}
@@ -194,9 +194,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                         setShowSymbolSearch(false);
                         setSearchQuery('');
                       }}
-                      className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 transition-colors"
+                      className="w-full px-3 py-2 text-left text-white transition-colors hover:bg-gray-700"
                     >
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <span className="font-medium">{symbol.baseAsset}</span>
                         <span className="text-xs text-gray-400">{symbol.symbol}</span>
                       </div>
@@ -210,7 +210,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
         {/* Metrics Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Metrics</label>
+          <label className="block mb-2 text-sm font-medium text-gray-300">Metrics</label>
           <div className="space-y-2">
             {metrics.map(metric => (
               <label key={metric} className="flex items-center text-sm text-gray-300">
@@ -223,7 +223,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                       : filters.metrics.filter(m => m !== metric);
                     onFiltersChange({ ...filters, metrics: newMetrics });
                   }}
-                  className="mr-2 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500"
+                  className="mr-2 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
                 />
                 {metric}
               </label>
@@ -233,8 +233,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
         {/* Color Theme */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            <Palette className="w-4 h-4 inline mr-1" />
+          <label className="block mb-2 text-sm font-medium text-gray-300">
+            <Palette className="inline w-4 h-4 mr-1" />
             Color Theme
           </label>
           <select
@@ -243,7 +243,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               const theme = colorThemes.find(t => t.id === e.target.value);
               if (theme) onThemeChange(theme);
             }}
-            className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-white bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             {colorThemes.map(theme => (
               <option key={theme.id} value={theme.id}>{theme.name}</option>
@@ -253,15 +253,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
         {/* Quick Actions */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            <Settings className="w-4 h-4 inline mr-1" />
+          <label className="block mb-2 text-sm font-medium text-gray-300">
+            <Settings className="inline w-4 h-4 mr-1" />
             Quick Actions
           </label>
           <div className="space-y-2">
-            <button className="w-full text-left px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-300 transition-colors">
+            <button className="w-full px-3 py-2 text-sm text-left text-gray-300 transition-colors bg-gray-800 rounded-lg hover:bg-gray-700">
               Reset Filters
             </button>
-            <button className="w-full text-left px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-300 transition-colors">
+            <button className="w-full px-3 py-2 text-sm text-left text-gray-300 transition-colors bg-gray-800 rounded-lg hover:bg-gray-700">
               Save View
             </button>
           </div>

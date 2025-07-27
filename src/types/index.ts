@@ -17,6 +17,7 @@ export interface CalendarCell {
   isToday: boolean;
   isSelected: boolean;
   isInRange: boolean;
+  timeframe?: 'daily' | 'weekly' | 'monthly';
 }
 
 export interface TimeFrame {
@@ -44,4 +45,5 @@ export interface DashboardData {
   selectedDate: Date | null;
   data: MarketData | null;
   isVisible: boolean;
+  timeframe?: 'daily' | 'weekly' | 'monthly';
 }

@@ -99,9 +99,9 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   const handleCellClick = (cell: CalendarCellType) => {
     setSelectedDate(cell.date);
-    if (timeframe === 'daily' || timeframe === 'weekly') {
-      onCellClick(cell);
-    }
+    // Pass the cell with timeframe information
+    const cellWithTimeframe = { ...cell, timeframe };
+    onCellClick(cellWithTimeframe);
   };
 
   return (
@@ -115,9 +115,9 @@ export const Calendar: React.FC<CalendarProps> = ({
       />
 
       {loading ? (
-        <div className="flex items-center justify-center h-96 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700/50">
+        <div className="flex items-center justify-center border rounded-lg h-96 bg-gray-900/50 border-gray-700/50">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+            <div className="w-12 h-12 mx-auto mb-4 border-b-2 border-blue-400 rounded-full animate-spin"></div>
             <p className="text-gray-400">Loading market data...</p>
           </div>
         </div>
