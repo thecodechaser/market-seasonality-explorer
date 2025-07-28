@@ -1,6 +1,6 @@
 import { ColorTheme, TimeFrame, BinanceSymbol } from '../types';
 
-export const metrics = ['Volatility', 'Liquidity', 'Volume', 'Performance',];
+export const metrics = ['Volatility', 'Liquidity', 'Volume', 'Performance'];
 
 export const colorThemes: ColorTheme[] = [
   {
@@ -36,6 +36,8 @@ export const fallbackSymbols = [
 export const filterSymbols = [
   'BTC',
   'ETH',
+  'DOGE',
+  'SHIB',
   'BNB',
   'ADA',
   'SOL',
