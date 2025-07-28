@@ -1,24 +1,25 @@
 import { Calculator, Target, Zap, Award } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export const MetricsGrid = () => {
-  const { dashboardData } = useSelector((state) => state.marketData);
-  const data = dashboardData.data;
+  const { dashboardData } = useSelector((state: RootState) => state.marketData);
+  const data = dashboardData?.data ?? {close: 0, performance: 0, volume: 0};
 
+  // RSI calculation
   const calculateRSI = () => {
-    // RSI calculation
     return (30 + Math.random() * 40).toFixed(1);
   };
 
+  // Moving Average
   const calculateMA = () => {
-    // Moving Average
-    return (data.close * (0.95 + Math.random() * 0.1)).toFixed(2);
+    return ((data?.close ?? 0) * (0.95 + Math.random() * 0.1)).toFixed(2);
   };
 
   const getMarketSentiment = () => {
-    if (data.performance > 2)
+    if (data && data.performance > 2)
       return { label: 'Bullish', color: 'text-green-400' };
-    if (data.performance < -2)
+    if (data && data.performance < -2)
       return { label: 'Bearish', color: 'text-red-400' };
     return { label: 'Neutral', color: 'text-gray-400' };
   };
@@ -39,7 +40,10 @@ export const MetricsGrid = () => {
     {
       icon: Zap,
       label: 'Market Cap',
-      value: `${((data.close * data.volume) / 1000000).toFixed(1)}M`,
+      value: `${(
+        ((data?.close ?? 0) * (data?.volume ?? 0)) /
+        1_000_000
+      ).toFixed(1)}M`,
       color: 'text-yellow-400',
     },
     {
@@ -55,6 +59,7 @@ export const MetricsGrid = () => {
       <h4 className="mb-3 text-sm font-medium text-gray-300">
         Technical Indicators
       </h4>
+
       <div className="grid grid-cols-2 gap-4">
         {metrics.map((metric, index) => (
           <div key={index} className="p-3 rounded-lg bg-gray-700/30">

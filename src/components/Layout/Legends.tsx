@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export const Legends = () => {
-  const { currentTheme } = useSelector((state) => state.marketData);
+  const { currentTheme } = useSelector((state: RootState) => state.marketData);
 
   return (
     <div
@@ -28,6 +29,7 @@ export const Legends = () => {
           ></div>
           <span className="text-gray-300">Low Volatility (&lt; 2%)</span>
         </div>
+
         <div className="flex items-center space-x-2">
           <div
             className="w-4 h-4 rounded"
@@ -40,6 +42,7 @@ export const Legends = () => {
           ></div>
           <span className="text-gray-300">Medium Volatility (2-4%)</span>
         </div>
+
         <div className="flex items-center space-x-2">
           <div
             className="w-4 h-4 rounded"

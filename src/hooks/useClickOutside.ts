@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+// Handle closing elements when clicked outside
 export const useClickOutside = (
   elementsRefs: (HTMLElement | null)[],
   handler: () => void,

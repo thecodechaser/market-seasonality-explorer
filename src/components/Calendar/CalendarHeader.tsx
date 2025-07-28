@@ -11,15 +11,19 @@ import {
 } from '../../store/marketDataSlice';
 import { timeframes } from '../../config/metricsConfig';
 import { formatHeaderDate } from '../../utils/calenderHelpers';
+import { RootState } from '../../store/store';
 
 export const CalendarHeader = () => {
   const dispatch = useDispatch();
-  const { timeframe, currentDate } = useSelector((state) => state.marketData);
+  const { timeframe, currentDate } = useSelector(
+    (state: RootState) => state.marketData
+  );
 
   const handleTimeChange = (newTimeframe: TimeFrame['id']) => {
     dispatch(updateTimeframe(newTimeframe));
   };
 
+  // Update current date on previous
   const handlePrevious = () => {
     const newDate = new Date(currentDate || new Date());
     if (timeframe === 'daily' || timeframe === 'weekly') {
@@ -30,6 +34,7 @@ export const CalendarHeader = () => {
     dispatch(updateCurrentDate(newDate.toISOString()));
   };
 
+  // Update current date on next
   const handleNext = () => {
     const newDate = new Date(currentDate || new Date());
     if (timeframe === 'daily' || timeframe === 'weekly') {

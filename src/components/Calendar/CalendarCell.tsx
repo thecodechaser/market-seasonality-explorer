@@ -13,6 +13,7 @@ import {
   formatNumberCompact,
   getWeekRangeString,
 } from '../../utils/calenderHelpers';
+import { RootState } from '../../store/store';
 
 interface CalendarCellProps {
   cell: CalendarCellType;
@@ -20,9 +21,8 @@ interface CalendarCellProps {
 
 export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
   const dispatch = useDispatch();
-
   const { currentTheme, timeframe, filters } = useSelector(
-    (state) => state.marketData
+    (state: RootState) => state.marketData
   );
   const today = new Date();
   today.setHours(23, 59, 59, 999);
@@ -56,6 +56,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
     );
   };
 
+  // Update Hover cell data in store
   const handleHoveredCell = (cell: CalendarCellType | null) =>
     dispatch(
       cell
@@ -63,6 +64,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
         : updateHoveredCell(null)
     );
 
+  // Update click cell data in store
   const handleCellClick = (cell: CalendarCellType) => {
     if (cell.data) {
       dispatch(updateSelectedDate(cell.date.toISOString()));

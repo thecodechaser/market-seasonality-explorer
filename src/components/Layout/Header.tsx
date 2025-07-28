@@ -1,8 +1,9 @@
 import { BarChart3, TrendingUp } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export const Header = () => {
-  const { hoveredCell } = useSelector((state) => state.marketData);
+  const { hoveredCell } = useSelector((state: RootState) => state.marketData);
 
   return (
     <header className="sticky top-0 z-40 border-b md:px-8 bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
