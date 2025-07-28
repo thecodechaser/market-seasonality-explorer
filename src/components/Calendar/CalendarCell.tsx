@@ -21,7 +21,6 @@ interface CalendarCellProps {
 
 export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
   const dispatch = useDispatch();
-
   const { currentTheme, timeframe, filters } = useSelector(
     (state: RootState) => state.marketData
   );
@@ -57,6 +56,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
     );
   };
 
+  // Update Hover cell data in store
   const handleHoveredCell = (cell: CalendarCellType | null) =>
     dispatch(
       cell
@@ -64,6 +64,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
         : updateHoveredCell(null)
     );
 
+  // Update click cell data in store
   const handleCellClick = (cell: CalendarCellType) => {
     if (cell.data) {
       dispatch(updateSelectedDate(cell.date.toISOString()));

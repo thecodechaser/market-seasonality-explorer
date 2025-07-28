@@ -14,6 +14,7 @@ export const ThemeSelection = ({}) => {
         <Palette className="inline w-4 h-4 mr-1" />
         Color Theme
       </label>
+
       <select
         value={currentTheme.id}
         onChange={(e) => {

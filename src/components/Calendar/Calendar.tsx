@@ -18,18 +18,17 @@ export const Calendar = () => {
     dispatch(loadMarketData());
   }, [currentDate, filters.symbol, timeframe, dispatch]);
 
+  // Update data every minute
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch(updateRealtimeData());
-    }, 60000); // every 1 min
-
+    }, 60000);
     return () => clearInterval(interval);
   }, [filters.symbol, timeframe, dispatch]);
 
   return (
     <div className="space-y-6">
       <CalendarHeader />
-
       <CalendarGrid />
     </div>
   );

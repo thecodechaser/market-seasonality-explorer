@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import { CalendarCell as CalendarCellType } from '../types';
 
+// Download calles data to pdf, csv, image
 export const exportMarketData = ({
   data,
   format,
@@ -21,6 +22,7 @@ export const exportMarketData = ({
     return;
   }
 
+  // Download as csv
   if (format === 'csv') {
     const csv = [
       [
@@ -61,6 +63,7 @@ export const exportMarketData = ({
     return;
   }
 
+  // Download as pdf
   if (format === 'pdf') {
     const doc = new jsPDF();
     const lineHeight = 10;
@@ -95,6 +98,7 @@ export const exportMarketData = ({
     return;
   }
 
+  // Download as image
   if (format === 'image') {
     const canvas = document.createElement('canvas');
     const rowHeight = 24;

@@ -1,3 +1,5 @@
+// Constants
+
 import { ColorTheme, TimeFrame, BinanceSymbol } from '../types';
 
 export const metrics = ['Volatility', 'Liquidity', 'Volume', 'Performance'];

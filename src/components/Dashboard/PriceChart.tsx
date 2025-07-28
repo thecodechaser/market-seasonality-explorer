@@ -9,7 +9,7 @@ export const PriceChart = () => {
   // Generate intraday data points
   const generateIntradayData = () => {
     const points = [];
-    const totalPoints = 24; // Hourly data
+    const totalPoints = 24;
 
     for (let i = 0; i < totalPoints; i++) {
       const progress = i / (totalPoints - 1);

@@ -16,6 +16,7 @@ export const MetricsSelection = ({}) => {
       <label className="block mb-2 text-sm font-medium text-gray-300">
         Metrics
       </label>
+      
       <div className="flex flex-wrap gap-2">
         {metrics.map((metric) => {
           const isActive = filters.metrics.includes(metric);

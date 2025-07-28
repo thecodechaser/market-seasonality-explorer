@@ -15,7 +15,6 @@ export const SymbolSelection = ({}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSymbolSearch, setShowSymbolSearch] = useState(false);
   const [filteredSymbols, setFilteredSymbols] = useState<BinanceSymbol[]>([]);
-
   const symbolRef = useRef<HTMLDivElement>(null);
 
   useClickOutside([symbolRef.current], () => {
@@ -26,6 +25,7 @@ export const SymbolSelection = ({}) => {
     dispatch(loadSymbols());
   }, []);
 
+  // handle the search for symbols, Initially show 20
   useEffect(() => {
     if (searchQuery) {
       const filtered = symbols
@@ -52,6 +52,7 @@ export const SymbolSelection = ({}) => {
       <label className="block mb-2 text-sm font-medium text-gray-300">
         Symbol
       </label>
+
       <div className="relative">
         <button
           onClick={() => setShowSymbolSearch(!showSymbolSearch)}
@@ -74,6 +75,7 @@ export const SymbolSelection = ({}) => {
                 className="w-full px-3 py-2 text-sm text-white bg-gray-700 border border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
               />
             </div>
+
             <div className="overflow-y-auto max-h-48">
               {filteredSymbols.map((symbol) => (
                 <button

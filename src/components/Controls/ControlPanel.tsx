@@ -4,7 +4,7 @@ import { SymbolSelection } from './SymbolSelection.tsx';
 import { ExportData } from './ExportData.tsx';
 import { ThemeSelection } from './ThemeSelection.tsx';
 
-export const ControlPanel = ({}) => {
+export const ControlPanel = () => {
   return (
     <div className="p-4 mb-6 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
       <div className="flex items-center justify-between mb-4">
@@ -20,9 +20,7 @@ export const ControlPanel = ({}) => {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <SymbolSelection />
-
         <MetricsSelection />
-
         <ThemeSelection />
 
         <div>

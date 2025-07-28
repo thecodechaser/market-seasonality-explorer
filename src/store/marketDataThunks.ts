@@ -4,6 +4,7 @@ import { updateLoading, updateMarketData, updateSymbolList, updateError } from '
 import { binanceApi } from '../services/binanceApi';
 import { fallbackSymbols, filterSymbols } from '../config/metricsConfig';
 
+// Methods to call APIs functions
 export const loadMarketData = createAsyncThunk(
   'marketData/load',
   async (_, { getState, dispatch }) => {

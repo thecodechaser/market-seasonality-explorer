@@ -15,7 +15,10 @@ export const CalendarGrid = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { selectedDate, timeframe, marketData, currentDate, loading, error } =
     useSelector((state: RootState) => state.marketData);
+  const layoutClass = getGridLayout(timeframe);
+  const headers = getHeaders(timeframe);
 
+  // Generate calendar cells with api data
   const cells = useMemo(() => {
     return generateCalendarCells(
       currentDate,
@@ -29,13 +32,9 @@ export const CalendarGrid = () => {
     dispatch(updateExportData(cells.map(({ date, ...rest }) => rest)));
   }, [dispatch, cells]);
 
-  const layoutClass = getGridLayout(timeframe);
-
-  const headers = getHeaders(timeframe);
-
   return (
     <div className="p-4 border rounded-lg bg-gray-900/50 border-gray-700/50">
-      {/* Headers */}
+      {/* Headers/Days */}
       {timeframe === 'daily' && (
         <div className="grid grid-cols-7 gap-2 mb-4">
           {headers.map((header) => (

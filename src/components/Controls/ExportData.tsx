@@ -1,26 +1,18 @@
 import { useState, useRef } from 'react';
-import {
-  Download,
-  FileText,
-  Image,
-  FileSpreadsheet,
-} from 'lucide-react';
+import { Download, FileText, Image, FileSpreadsheet } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { exportMarketData } from '../../utils/exportMarketData.ts';
 import { useClickOutside } from '../../hooks/useClickOutside.ts';
 import { RootState } from '../../store/store.ts';
 
 export const ExportData = ({}) => {
-  const { exportData } = useSelector(
-    (state: RootState) => state.marketData
-  );
+  const { exportData } = useSelector((state: RootState) => state.marketData);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
 
   useClickOutside([exportRef.current], () => {
     setShowExportMenu(false);
   });
-
 
   const handleExportOption = (format: 'pdf' | 'csv' | 'image') => {
     setShowExportMenu(false);
@@ -39,7 +31,7 @@ export const ExportData = ({}) => {
         <Download className="w-4 h-4" />
         <span>Export</span>
       </button>
-
+      
       {showExportMenu && (
         <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl z-[100]">
           <button

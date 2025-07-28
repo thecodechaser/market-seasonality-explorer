@@ -6,6 +6,7 @@ export const Footer = () => {
           <p className="text-xs text-gray-400 md:text-sm">
             Market Seasonality Explorer - Real-time financial market analysis
           </p>
+
           <p className="order-3 text-xs text-gray-400 md:text-sm lg:order-none">
             © {new Date().getFullYear()} All rights reserved.{' '}
             <a
@@ -17,6 +18,7 @@ export const Footer = () => {
               thecodechaser.com
             </a>
           </p>
+
           <p className="text-xs text-gray-400 md:text-sm">
             Data updates every minute • {new Date().toLocaleTimeString()}
           </p>

@@ -8,6 +8,7 @@ import {
   BinanceSymbol
 } from '../types';
 
+// Initial state
 const initialState: {
   currentTheme: ColorTheme;
   exportData: CalendarCellType[];
@@ -48,6 +49,7 @@ const initialState: {
   error: null,
 };
 
+// Actions
 const marketDataSlice = createSlice({
   name: 'marketData',
   initialState,

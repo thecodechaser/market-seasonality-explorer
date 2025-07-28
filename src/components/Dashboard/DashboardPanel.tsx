@@ -10,10 +10,8 @@ import { RootState } from '../../store/store';
 export const DashboardPanel = () => {
   const dispatch = useDispatch();
   const { dashboardData } = useSelector((state: RootState) => state.marketData);
-
-  const panelRef = useRef<HTMLDivElement>(null);
-
   const { data, selectedDate, timeframe = 'daily' } = dashboardData;
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(
     [panelRef.current],
@@ -89,7 +87,6 @@ export const DashboardPanel = () => {
           </button>
         </div>
 
-        {/* Content */}
         <div className="flex-1 p-6 space-y-6 overflow-y-auto">
           {/* Price Overview */}
           <div className="p-4 border rounded-lg bg-gray-800/50 border-gray-700/50">
@@ -235,10 +232,7 @@ export const DashboardPanel = () => {
             </div>
           </div>
 
-          {/* Mini Price Chart */}
           <PriceChart />
-
-          {/* Additional Metrics */}
           <MetricsGrid />
         </div>
       </div>

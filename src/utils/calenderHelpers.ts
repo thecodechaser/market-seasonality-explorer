@@ -55,6 +55,7 @@ export const formatHeaderDate = (
   }
 };
 
+// Generate calendar cells with api data
 export const generateCalendarCells = (
   currentDate: Date | null,
   timeframe: string,
@@ -98,19 +99,14 @@ export const generateCalendarCells = (
     const year = parsedCurrentDate.getFullYear();
     const month = parsedCurrentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-
-    // Start from the beginning of the week containing the first day
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
-    // Generate weeks (up to 6 weeks to cover the month)
     for (let week = 0; week < 6; week++) {
       const weekStart = new Date(startDate);
       weekStart.setDate(startDate.getDate() + week * 7);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
-
-      // Aggregate data for this week
       const weekData = marketData.filter((d) => {
         const dataDate = new Date(d.date);
         return dataDate >= weekStart && dataDate <= weekEnd;
@@ -160,12 +156,11 @@ export const generateCalendarCells = (
   } else if (timeframe === 'monthly') {
     // Generate monthly view
     const year = parsedCurrentDate.getFullYear();
-
+    
     for (let month = 0; month < 12; month++) {
       const monthStart = new Date(year, month, 1);
       const monthEnd = new Date(year, month + 1, 0);
 
-      // Aggregate data for this month
       const monthData = marketData.filter((d) => {
         const dataDate = new Date(d.date);
         return dataDate >= monthStart && dataDate <= monthEnd;
