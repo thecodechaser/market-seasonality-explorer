@@ -10,7 +10,7 @@ import { RootState, AppDispatch } from '../../store/store';
 
 export const Calendar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { currentDate, loading, filters, timeframe } = useSelector(
+  const { currentDate, filters, timeframe } = useSelector(
     (state: RootState) => state.marketData
   );
 
@@ -30,16 +30,7 @@ export const Calendar = () => {
     <div className="space-y-6">
       <CalendarHeader />
 
-      {loading ? (
-        <div className="flex items-center justify-center border rounded-lg h-96 bg-gray-900/50 border-gray-700/50">
-          <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-4 border-b-2 border-blue-400 rounded-full animate-spin"></div>
-            <p className="text-gray-400">Loading market data...</p>
-          </div>
-        </div>
-      ) : (
-        <CalendarGrid />
-      )}
+      <CalendarGrid />
     </div>
   );
 };

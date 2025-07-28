@@ -176,26 +176,29 @@ export const FilterPanel = ({}) => {
           <label className="block mb-2 text-sm font-medium text-gray-300">
             Metrics
           </label>
-          <div className="space-y-2">
-            {metrics.map((metric) => (
-              <label
-                key={metric}
-                className="flex items-center text-sm text-gray-300"
-              >
-                <input
-                  type="checkbox"
-                  checked={filters.metrics.includes(metric)}
-                  onChange={(e) => {
-                    const newMetrics = e.target.checked
-                      ? [...filters.metrics, metric]
-                      : filters.metrics.filter((m) => m !== metric);
+          <div className="flex flex-wrap gap-2">
+            {metrics.map((metric) => {
+              const isActive = filters.metrics.includes(metric);
+              return (
+                <button
+                  key={metric}
+                  type="button"
+                  onClick={() => {
+                    const newMetrics = isActive
+                      ? filters.metrics.filter((m) => m !== metric)
+                      : [...filters.metrics, metric];
                     handleFilterChange({ metrics: newMetrics });
                   }}
-                  className="mr-2 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
-                />
-                {metric}
-              </label>
-            ))}
+                  className={`px-3 py-1.5 rounded text-sm border transition-all ${
+                    isActive
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'
+                  }`}
+                >
+                  {metric}
+                </button>
+              );
+            })}
           </div>
         </div>
 

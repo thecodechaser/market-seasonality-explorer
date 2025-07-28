@@ -48,7 +48,7 @@ class BinanceApiService {
       return this.symbolsCache;
     } catch (error) {
       console.error('Failed to fetch symbols:', error);
-      return [];
+      throw error;
     }
   }
 

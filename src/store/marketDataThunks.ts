@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { marketDataService } from '../services/marketDataService';
-import { updateLoading, updateMarketData, updateSymbolList } from './marketDataSlice';
+import { updateLoading, updateMarketData, updateSymbolList, updateError } from './marketDataSlice';
 import { binanceApi } from '../services/binanceApi';
 import { fallbackSymbols, filterSymbols } from '../config/metricsConfig';
 
@@ -39,8 +39,9 @@ export const loadMarketData = createAsyncThunk(
         timeframe
       );
       dispatch(updateMarketData(data));
-    } catch (error) {
-      console.error('Failed to load market data:', error);
+    } catch (error: any) {
+      dispatch(updateError(error.message || 'Unknown error occurred'));
+      dispatch(updateMarketData([]));
     } finally {
       dispatch(updateLoading(false));
     }
@@ -69,8 +70,9 @@ export const updateRealtimeData = createAsyncThunk(
         updatedData.push(realtimeData);
       }
       dispatch(updateMarketData(updatedData));
-    } catch (error) {
-      console.error('Failed to update realtime data:', error);
+    } catch (error: any) {
+      dispatch(updateError(error.message || 'Unknown error occurred'));
+      dispatch(updateMarketData([]));
     }
   }
 );
@@ -86,11 +88,9 @@ export const loadSymbols = createAsyncThunk(
         .slice(0, 100);
 
       dispatch(updateSymbolList(popularSymbols));
-      return popularSymbols;
     } catch (error) {
       console.error('Failed to load symbols:', error);
       dispatch(updateSymbolList(fallbackSymbols));
-      return fallbackSymbols;
     }
   }
 );

@@ -1,6 +1,6 @@
 import { ColorTheme, TimeFrame, BinanceSymbol } from '../types';
 
-export const metrics = ['Volatility', 'Liquidity', 'Performance', 'Volume'];
+export const metrics = ['Volatility', 'Liquidity', 'Volume', 'Performance',];
 
 export const colorThemes: ColorTheme[] = [
   {
@@ -23,7 +23,12 @@ export const colorThemes: ColorTheme[] = [
 export const fallbackSymbols = [
   { symbol: 'BTCUSDT', baseAsset: 'BTC', quoteAsset: 'USDT' },
   { symbol: 'ETHUSDT', baseAsset: 'ETH', quoteAsset: 'USDT' },
+  { symbol: 'BNBUSDT', baseAsset: 'BNB', quoteAsset: 'USDT' },
+  { symbol: 'SOLUSDT', baseAsset: 'SOL', quoteAsset: 'USDT' },
+  { symbol: 'XRPUSDT', baseAsset: 'XRP', quoteAsset: 'USDT' },
   { symbol: 'ADAUSDT', baseAsset: 'ADA', quoteAsset: 'USDT' },
+  { symbol: 'DOGEUSDT', baseAsset: 'DOGE', quoteAsset: 'USDT' },
+  { symbol: 'SHIBUSDT', baseAsset: 'SHIB', quoteAsset: 'USDT' },
   { symbol: 'SOLUSDT', baseAsset: 'SOL', quoteAsset: 'USDT' },
   { symbol: 'DOTUSDT', baseAsset: 'DOT', quoteAsset: 'USDT' },
 ] as BinanceSymbol[];
@@ -44,5 +49,5 @@ export const filterSymbols = [
 export const timeframes: TimeFrame[] = [
   { id: 'daily', label: 'Daily' },
   { id: 'weekly', label: 'Weekly' },
-  { id: 'monthly', label: 'Monthly' }
+  { id: 'monthly', label: 'Monthly' },
 ];

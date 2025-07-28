@@ -20,6 +20,7 @@ const initialState: {
   loading: boolean;
   currentDate: Date | null;
   symbols: BinanceSymbol[];
+  error: string | null
 } = {
   currentTheme: {
     id: 'default',
@@ -44,6 +45,7 @@ const initialState: {
   loading: false,
   currentDate: null,
   symbols: [],
+  error: null,
 };
 
 const marketDataSlice = createSlice({
@@ -89,6 +91,9 @@ const marketDataSlice = createSlice({
     updateSymbolList: (state, action) => {
       state.symbols = action.payload;
     },
+    updateError: (state, action) => {
+      state.error = action.payload
+    }
   },
 });
 
@@ -103,7 +108,8 @@ export const {
   updateMarketData,
   updateLoading,
   updateCurrentDate,
-  updateSymbolList
+  updateSymbolList,
+  updateError
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;
