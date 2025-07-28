@@ -81,6 +81,7 @@ class MarketDataService {
       return cached.data;
     }
 
+
     try {
       // For better data coverage, extend the date range
       const extendedStartDate = new Date(startDate);
@@ -129,6 +130,7 @@ class MarketDataService {
       throw error;
     }
   }
+
 
   async getRealtimeData(symbol: string): Promise<MarketData> {
     try {

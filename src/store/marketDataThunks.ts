@@ -39,6 +39,7 @@ export const loadMarketData = createAsyncThunk(
         timeframe
       );
       dispatch(updateMarketData(data));
+      dispatch(updateError(null));
     } catch (error: any) {
       dispatch(updateError(error.message || 'Unknown error occurred'));
       dispatch(updateMarketData([]));
@@ -70,6 +71,7 @@ export const updateRealtimeData = createAsyncThunk(
         updatedData.push(realtimeData);
       }
       dispatch(updateMarketData(updatedData));
+      dispatch(updateError(null));
     } catch (error: any) {
       dispatch(updateError(error.message || 'Unknown error occurred'));
       dispatch(updateMarketData([]));
