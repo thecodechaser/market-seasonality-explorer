@@ -4,7 +4,7 @@ import { updateCurrentTheme } from '../../store/marketDataSlice.ts';
 import { colorThemes } from '../../config/metricsConfig.ts';
 import { RootState } from '../../store/store.ts';
 
-export const ThemeSelection = ({}) => {
+export const ThemeSelection = () => {
   const dispatch = useDispatch();
   const { currentTheme } = useSelector((state: RootState) => state.marketData);
 

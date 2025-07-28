@@ -120,8 +120,10 @@ class MarketDataService {
       });
 
       return marketData;
-    } catch (error: any) {
-      if (error.message?.includes('fetch') || error.isAxiosError) {
+    } catch (error: unknown) {
+      let message = 'Unknown error occurred';
+      if (error instanceof Error) message = error.message;
+      if (message?.includes('fetch')) {
         throw new Error(
           'Failed to fetch market data. Please check your network connection or try again later.'
         );
@@ -156,8 +158,10 @@ class MarketDataService {
           parseFloat(ticker24hr.priceChangePercent).toFixed(2)
         ),
       };
-    } catch (error: any) {
-      if (error.message?.includes('fetch') || error.isAxiosError) {
+    } catch (error: unknown) {
+      let message = 'Unknown error occurred';
+      if (error instanceof Error) message = error.message;
+      if (message?.includes('fetch')) {
         throw new Error(
           'Failed to fetch market data. Please check your network connection or try again later.'
         );

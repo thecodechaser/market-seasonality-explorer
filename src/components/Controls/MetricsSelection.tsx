@@ -2,12 +2,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateFilters } from '../../store/marketDataSlice.ts';
 import { metrics } from '../../config/metricsConfig.ts';
 import { RootState } from '../../store/store.ts';
+import { FilterOptions } from '../../types/index.ts';
 
-export const MetricsSelection = ({}) => {
+export const MetricsSelection = () => {
   const dispatch = useDispatch();
   const { filters } = useSelector((state: RootState) => state.marketData);
 
-  const handleFilterChange = (newFilters: any) => {
+  const handleFilterChange = (newFilters: Partial<FilterOptions>) => {
     dispatch(updateFilters(newFilters));
   };
 

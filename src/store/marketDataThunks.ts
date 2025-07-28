@@ -1,54 +1,63 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { marketDataService } from '../services/marketDataService';
-import { updateLoading, updateMarketData, updateSymbolList, updateError } from './marketDataSlice';
+import {
+  updateLoading,
+  updateMarketData,
+  updateSymbolList,
+  updateError,
+} from './marketDataSlice';
 import { binanceApi } from '../services/binanceApi';
 import { fallbackSymbols, filterSymbols } from '../config/metricsConfig';
+import { RootState } from './store';
 
 // Methods to call APIs functions
-export const loadMarketData = createAsyncThunk(
-  'marketData/load',
-  async (_, { getState, dispatch }) => {
-    const state: any = getState();
-    const { currentDate, timeframe, filters } = state.marketData;
-    const parsedCurrentDate = new Date(currentDate || new Date());
-    const symbol = filters.symbol;
+export const loadMarketData = createAsyncThunk<
+  void,
+  void,
+  { state: RootState }
+>('marketData/load', async (_, { getState, dispatch }) => {
+  const state = getState();
+  const { currentDate, timeframe, filters } = state.marketData;
+  const parsedCurrentDate = new Date(currentDate || new Date());
+  const symbol = filters.symbol;
 
-    dispatch(updateLoading(true));
-    try {
-      let startDate: Date, endDate: Date;
+  dispatch(updateLoading(true));
+  try {
+    let startDate: Date, endDate: Date;
 
-      if (timeframe === 'daily' || timeframe === 'weekly') {
-        startDate = new Date(
-          parsedCurrentDate.getFullYear(),
-          parsedCurrentDate.getMonth(),
-          1
-        );
-        endDate = new Date(
-          parsedCurrentDate.getFullYear(),
-          parsedCurrentDate.getMonth() + 1,
-          0
-        );
-      } else {
-        startDate = new Date(parsedCurrentDate.getFullYear(), 0, 1);
-        endDate = new Date(parsedCurrentDate.getFullYear(), 11, 31);
-      }
-
-      const data = await marketDataService.getMarketData(
-        startDate,
-        endDate,
-        symbol,
-        timeframe
+    if (timeframe === 'daily' || timeframe === 'weekly') {
+      startDate = new Date(
+        parsedCurrentDate.getFullYear(),
+        parsedCurrentDate.getMonth(),
+        1
       );
-      dispatch(updateMarketData(data));
-      dispatch(updateError(null));
-    } catch (error: any) {
-      dispatch(updateError(error.message || 'Unknown error occurred'));
-      dispatch(updateMarketData([]));
-    } finally {
-      dispatch(updateLoading(false));
+      endDate = new Date(
+        parsedCurrentDate.getFullYear(),
+        parsedCurrentDate.getMonth() + 1,
+        0
+      );
+    } else {
+      startDate = new Date(parsedCurrentDate.getFullYear(), 0, 1);
+      endDate = new Date(parsedCurrentDate.getFullYear(), 11, 31);
     }
+
+    const data = await marketDataService.getMarketData(
+      startDate,
+      endDate,
+      symbol,
+      timeframe
+    );
+    dispatch(updateMarketData(data));
+    dispatch(updateError(null));
+  } catch (error: unknown) {
+    let message = 'Unknown error occurred';
+    if (error instanceof Error) message = error.message;
+    dispatch(updateError(message));
+    dispatch(updateMarketData([]));
+  } finally {
+    dispatch(updateLoading(false));
   }
-);
+});
 
 export const updateRealtimeData = createAsyncThunk(
   'marketData/updateRealtimeData',
@@ -73,8 +82,10 @@ export const updateRealtimeData = createAsyncThunk(
       }
       dispatch(updateMarketData(updatedData));
       dispatch(updateError(null));
-    } catch (error: any) {
-      dispatch(updateError(error.message || 'Unknown error occurred'));
+    } catch (error: unknown) {
+      let message = 'Unknown error occurred';
+      if (error instanceof Error) message = error.message;
+      dispatch(updateError(message));
       dispatch(updateMarketData([]));
     }
   }

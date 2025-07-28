@@ -5,7 +5,7 @@ import { exportMarketData } from '../../utils/exportMarketData.ts';
 import { useClickOutside } from '../../hooks/useClickOutside.ts';
 import { RootState } from '../../store/store.ts';
 
-export const ExportData = ({}) => {
+export const ExportData = () => {
   const { exportData } = useSelector((state: RootState) => state.marketData);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);

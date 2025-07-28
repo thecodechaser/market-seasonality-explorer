@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { CalendarCell as CalendarCellType } from '../types';
+import { CalendarCell as CalendarCellType, MarketData } from '../types';
 
 // Download calles data to pdf, csv, image
 export const exportMarketData = ({
@@ -81,7 +81,7 @@ export const exportMarketData = ({
       y += lineHeight * 2;
     };
 
-    const addRow = (data: any) => {
+    const addRow = (data: MarketData) => {
       const text = `${data.date}: Open ${data.open}, High ${data.high}, Low ${data.low}, Close ${data.close}, Vol ${data.volume}`;
       if (y + lineHeight > pageHeight - 10) {
         doc.addPage();

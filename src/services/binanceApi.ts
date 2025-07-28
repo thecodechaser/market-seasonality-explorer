@@ -32,23 +32,19 @@ class BinanceApiService {
       return this.symbolsCache;
     }
 
-    try {
-      const url = `${this.baseUrl}/exchangeInfo`;
-      const data = await this.fetchWithRetry(url);
+    const url = `${this.baseUrl}/exchangeInfo`;
+    const data = await this.fetchWithRetry(url);
 
-      // Filter for USDT pairs only and active symbols
-      this.symbolsCache = data.symbols.filter(
-        (symbol: BinanceSymbol) =>
-          symbol.quoteAsset === 'USDT' &&
-          symbol.status === 'TRADING' &&
-          symbol.isSpotTradingAllowed
-      );
+    // Filter for USDT pairs only and active symbols
+    this.symbolsCache = data.symbols.filter(
+      (symbol: BinanceSymbol) =>
+        symbol.quoteAsset === 'USDT' &&
+        symbol.status === 'TRADING' &&
+        symbol.isSpotTradingAllowed
+    );
 
-      this.symbolsCacheTime = Date.now();
-      return this.symbolsCache;
-    } catch (error) {
-      throw error;
-    }
+    this.symbolsCacheTime = Date.now();
+    return this.symbolsCache;
   }
 
   async searchSymbols(query: string): Promise<BinanceSymbol[]> {
@@ -83,36 +79,40 @@ class BinanceApiService {
       url += `&endTime=${endTime}`;
     }
 
-    try {
-      const data = await this.fetchWithRetry(url);
+    const data = await this.fetchWithRetry(url);
 
-      return data.map((kline: any[]) => ({
-        openTime: kline[0],
-        open: kline[1],
-        high: kline[2],
-        low: kline[3],
-        close: kline[4],
-        volume: kline[5],
-        closeTime: kline[6],
-        quoteAssetVolume: kline[7],
-        numberOfTrades: kline[8],
-        takerBuyBaseAssetVolume: kline[9],
-        takerBuyQuoteAssetVolume: kline[10],
-      }));
-    } catch (error) {
-      throw error;
-    }
+    return data.map((kline: [
+      number,      // openTime
+      string,      // open
+      string,      // high
+      string,      // low
+      string,      // close
+      string,      // volume
+      number,      // closeTime
+      string,      // quoteAssetVolume
+      number,      // numberOfTrades
+      string,      // takerBuyBaseAssetVolume
+      string       // takerBuyQuoteAssetVolume
+    ]) => ({
+      openTime: kline[0],
+      open: kline[1],
+      high: kline[2],
+      low: kline[3],
+      close: kline[4],
+      volume: kline[5],
+      closeTime: kline[6],
+      quoteAssetVolume: kline[7],
+      numberOfTrades: kline[8],
+      takerBuyBaseAssetVolume: kline[9],
+      takerBuyQuoteAssetVolume: kline[10],
+    }));
   }
 
   async get24hrTicker(symbol: string): Promise<BinanceTicker24hr> {
     const binanceSymbol = symbol.endsWith('USDT') ? symbol : `${symbol}USDT`;
     const url = `${this.baseUrl}/ticker/24hr?symbol=${binanceSymbol}`;
 
-    try {
-      return await this.fetchWithRetry(url);
-    } catch (error) {
-      throw error;
-    }
+    return await this.fetchWithRetry(url);
   }
 
   async getCurrentPrice(
@@ -121,11 +121,7 @@ class BinanceApiService {
     const binanceSymbol = symbol.endsWith('USDT') ? symbol : `${symbol}USDT`;
     const url = `${this.baseUrl}/ticker/price?symbol=${binanceSymbol}`;
 
-    try {
-      return await this.fetchWithRetry(url);
-    } catch (error) {
-      throw error;
-    }
+    return await this.fetchWithRetry(url);
   }
 
   async getOrderBookDepth(
@@ -139,11 +135,7 @@ class BinanceApiService {
     const binanceSymbol = symbol.endsWith('USDT') ? symbol : `${symbol}USDT`;
     const url = `${this.baseUrl}/depth?symbol=${binanceSymbol}&limit=${limit}`;
 
-    try {
-      return await this.fetchWithRetry(url);
-    } catch (error) {
-      throw error;
-    }
+    return await this.fetchWithRetry(url);
   }
 
   // Calculate volatility from price data

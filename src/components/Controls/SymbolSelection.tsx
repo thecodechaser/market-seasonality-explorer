@@ -6,8 +6,9 @@ import { updateFilters } from '../../store/marketDataSlice.ts';
 import { loadSymbols } from '../../store/marketDataThunks.ts';
 import { useClickOutside } from '../../hooks/useClickOutside.ts';
 import { RootState, AppDispatch } from '../../store/store.ts';
+import { FilterOptions } from '../../types/index.ts';
 
-export const SymbolSelection = ({}) => {
+export const SymbolSelection = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { filters, symbols } = useSelector(
     (state: RootState) => state.marketData
@@ -23,7 +24,7 @@ export const SymbolSelection = ({}) => {
 
   useEffect(() => {
     dispatch(loadSymbols());
-  }, []);
+  }, [dispatch]);
 
   // handle the search for symbols, Initially show 20
   useEffect(() => {
@@ -43,7 +44,7 @@ export const SymbolSelection = ({}) => {
     }
   }, [searchQuery, symbols]);
 
-  const handleFilterChange = (newFilters: any) => {
+  const handleFilterChange = (newFilters: Partial<FilterOptions>) => {
     dispatch(updateFilters(newFilters));
   };
 

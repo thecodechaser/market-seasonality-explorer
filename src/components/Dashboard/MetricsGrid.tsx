@@ -4,7 +4,7 @@ import { RootState } from '../../store/store';
 
 export const MetricsGrid = () => {
   const { dashboardData } = useSelector((state: RootState) => state.marketData);
-  const data = dashboardData.data;
+  const data = dashboardData?.data ?? {close: 0, performance: 0, volume: 0};
 
   // RSI calculation
   const calculateRSI = () => {
