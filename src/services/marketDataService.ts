@@ -33,6 +33,7 @@ class MarketDataService {
     }
   }
 
+  // Convert to market/ui data
   private convertBinanceToMarketData(
     klineData: BinanceKlineData[],
     symbol: string
@@ -81,7 +82,6 @@ class MarketDataService {
       return cached.data;
     }
 
-
     try {
       // For better data coverage, extend the date range
       const extendedStartDate = new Date(startDate);
@@ -126,11 +126,9 @@ class MarketDataService {
           'Failed to fetch market data. Please check your network connection or try again later.'
         );
       }
-
       throw error;
     }
   }
-
 
   async getRealtimeData(symbol: string): Promise<MarketData> {
     try {
@@ -164,7 +162,6 @@ class MarketDataService {
           'Failed to fetch market data. Please check your network connection or try again later.'
         );
       }
-
       throw error;
     }
   }
