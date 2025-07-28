@@ -54,7 +54,7 @@ export interface BinanceSymbol {
   cancelReplaceAllowed: boolean;
   isSpotTradingAllowed: boolean;
   isMarginTradingAllowed: boolean;
-  filters: any[];
+  filters: [];
   permissions: string[];
 }
 
