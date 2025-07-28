@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import marketDataReducer from './marketDataSlice';
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     marketData: marketDataReducer,
   },
 });
 
-export default store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

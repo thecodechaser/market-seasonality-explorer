@@ -1,8 +1,9 @@
 import { BarChart3 } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export const PriceChart = () => {
-  const { dashboardData } = useSelector((state) => state.marketData);
+  const { dashboardData } = useSelector((state: RootState) => state.marketData);
   const data = dashboardData.data;
 
   // Generate intraday data points
@@ -12,14 +13,19 @@ export const PriceChart = () => {
 
     for (let i = 0; i < totalPoints; i++) {
       const progress = i / (totalPoints - 1);
-      const basePrice = data.open + (data.close - data.open) * progress;
-      const noise = (Math.random() - 0.5) * (data.high - data.low) * 0.3;
-      const price = Math.max(data.low, Math.min(data.high, basePrice + noise));
+      const open = data?.open ?? 0;
+      const close = data?.close ?? 0;
+      const high = data?.high ?? 0;
+      const low = data?.low ?? 0;
+
+      const basePrice = open + (close - open) * progress;
+      const noise = (Math.random() - 0.5) * (high - low) * 0.3;
+      const price = Math.max(low, Math.min(high, basePrice + noise));
 
       points.push({
         time: i,
         price: price,
-        volume: Math.random() * data.volume * 0.1,
+        volume: Math.random() * (data?.volume ?? 0) * 0.1,
       });
     }
 

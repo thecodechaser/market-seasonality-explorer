@@ -1,14 +1,15 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { X, TrendingUp, TrendingDown, BarChart3, Activity } from 'lucide-react';
 import { PriceChart } from './PriceChart';
 import { MetricsGrid } from './MetricsGrid';
 import { updateDashboardData } from '../../store/marketDataSlice';
 import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export const DashboardPanel = () => {
   const dispatch = useDispatch();
-  const { dashboardData } = useSelector((state) => state.marketData);
+  const { dashboardData } = useSelector((state: RootState) => state.marketData);
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +33,7 @@ export const DashboardPanel = () => {
     dispatch(updateDashboardData({ isVisible: false }));
   };
 
-  const parsedDate = new Date(selectedDate);
+  const parsedDate = new Date(selectedDate || new Date());
 
   return (
     <div
@@ -59,7 +60,7 @@ export const DashboardPanel = () => {
                 }
 
                 if (timeframe === 'weekly') {
-                  const weekStart = new Date(selectedDate);
+                  const weekStart = new Date(selectedDate || new Date());
                   const weekEnd = new Date(weekStart);
                   weekEnd.setDate(weekStart.getDate() + 6);
                   return `Week: ${weekStart.toLocaleDateString('en-US', {
@@ -104,25 +105,25 @@ export const DashboardPanel = () => {
               <div>
                 <p className="text-xs text-gray-400">Open</p>
                 <p className="font-semibold text-white text-md md:text-lg">
-                  ${data.open.toLocaleString()}
+                  ${data?.open.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">Close</p>
                 <p className="font-semibold text-white text-md md:text-lg">
-                  ${data.close.toLocaleString()}
+                  ${data?.close.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">High</p>
                 <p className="font-semibold text-green-400 text-md md:text-lg">
-                  ${data.high.toLocaleString()}
+                  ${data?.high.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">Low</p>
                 <p className="font-semibold text-red-400 text-md md:text-lg">
-                  ${data.low.toLocaleString()}
+                  ${data?.low.toLocaleString()}
                 </p>
               </div>
             </div>
@@ -131,7 +132,7 @@ export const DashboardPanel = () => {
           {/* Performance */}
           <div className="p-4 border rounded-lg bg-gray-800/50 border-gray-700/50">
             <h4 className="flex items-center mb-3 text-sm font-medium text-gray-300">
-              {data.performance >= 0 ? (
+              {data && data.performance >= 0 ? (
                 <TrendingUp className="w-4 h-4 mr-2 text-green-400" />
               ) : (
                 <TrendingDown className="w-4 h-4 mr-2 text-red-400" />
@@ -142,28 +143,32 @@ export const DashboardPanel = () => {
               <div>
                 <p className="text-xs text-gray-400">
                   {(() => {
-                    const dataDate = new Date(data.date);
+                    const dataDate = new Date(data?.date || new Date());
                     const isMonthlyData = dataDate.getDate() === 1;
                     return isMonthlyData ? 'Monthly Change' : 'Daily Change';
                   })()}
                 </p>
                 <p
                   className={`text-md md:text-lg font-bold ${
-                    data.performance >= 0 ? 'text-green-400' : 'text-red-400'
+                    data && data.performance >= 0
+                      ? 'text-green-400'
+                      : 'text-red-400'
                   }`}
                 >
-                  {data.performance >= 0 ? '+' : ''}
-                  {data.performance}%
+                  {data && data.performance >= 0 ? '+' : ''}
+                  {data && data.performance}%
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400">Change ($)</p>
                 <p
                   className={`text-md md:text-lg font-semibold ${
-                    data.performance >= 0 ? 'text-green-400' : 'text-red-400'
+                    data && data.performance >= 0
+                      ? 'text-green-400'
+                      : 'text-red-400'
                   }`}
                 >
-                  ${(data.close - data.open).toFixed(2)}
+                  ${((data?.close ?? 0) - (data?.open ?? 0)).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -180,20 +185,23 @@ export const DashboardPanel = () => {
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-gray-400">Volatility</p>
                   <p className="text-sm font-medium text-white">
-                    {data.volatility}%
+                    {data?.volatility}%
                   </p>
                 </div>
                 <div className="w-full h-2 rounded-full bg-gray-700/50">
                   <div
                     className={`h-2 rounded-full transition-all ${
-                      data.volatility < 2
+                      data && data.volatility < 2
                         ? 'bg-green-500'
-                        : data.volatility < 4
+                        : data && data.volatility < 4
                         ? 'bg-yellow-500'
                         : 'bg-red-500'
                     }`}
                     style={{
-                      width: `${Math.min((data.volatility / 6) * 100, 100)}%`,
+                      width: `${Math.min(
+                        ((data?.volatility ?? 0) / 6) * 100,
+                        100
+                      )}%`,
                     }}
                   />
                 </div>
@@ -203,13 +211,13 @@ export const DashboardPanel = () => {
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-gray-400">Liquidity Score</p>
                   <p className="text-sm font-medium text-white">
-                    {data.liquidity.toFixed(1)}
+                    {data?.liquidity.toFixed(1)}
                   </p>
                 </div>
                 <div className="w-full h-2 rounded-full bg-gray-700/50">
                   <div
                     className="h-2 transition-all bg-blue-500 rounded-full"
-                    style={{ width: `${data.liquidity}%` }}
+                    style={{ width: `${data?.liquidity}%` }}
                   />
                 </div>
               </div>
@@ -219,8 +227,8 @@ export const DashboardPanel = () => {
                   <p className="text-xs text-gray-400">Volume</p>
                   <p className="text-sm font-medium text-white">
                     {timeframe === 'monthly'
-                      ? `${(data.volume / 1000000000).toFixed(2)}B`
-                      : `${(data.volume / 1000000).toFixed(2)}M`}
+                      ? `${((data?.volume ?? 0) / 1_000_000_000).toFixed(2)}B`
+                      : `${((data?.volume ?? 0) / 1_000_000).toFixed(2)}M`}
                   </p>
                 </div>
               </div>

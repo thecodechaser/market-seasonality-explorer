@@ -37,7 +37,7 @@ export const getWeekRangeString = (start: Date): string => {
 
 export const formatHeaderDate = (
   timeframe: string,
-  currentDate: string | Date
+  currentDate: Date | null
 ): string => {
   const parsedDate = new Date(currentDate || new Date());
   if (timeframe === 'daily') {
@@ -56,14 +56,14 @@ export const formatHeaderDate = (
 };
 
 export const generateCalendarCells = (
-  currentDate: string,
+  currentDate: Date | null,
   timeframe: string,
   marketData: MarketData[],
-  selectedDate: string
+  selectedDate: Date | null
 ): CalendarCell[] => {
   const cells: CalendarCell[] = [];
   const parsedCurrentDate = new Date(currentDate || new Date());
-  const parsedSelectedDate = new Date(selectedDate);
+  const parsedSelectedDate = new Date(selectedDate || new Date());
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -72,7 +72,6 @@ export const generateCalendarCells = (
     const year = parsedCurrentDate.getFullYear();
     const month = parsedCurrentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -99,7 +98,6 @@ export const generateCalendarCells = (
     const year = parsedCurrentDate.getFullYear();
     const month = parsedCurrentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
 
     // Start from the beginning of the week containing the first day
     const startDate = new Date(firstDay);

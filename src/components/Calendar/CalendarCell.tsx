@@ -13,6 +13,7 @@ import {
   formatNumberCompact,
   getWeekRangeString,
 } from '../../utils/calenderHelpers';
+import { RootState } from '../../store/store';
 
 interface CalendarCellProps {
   cell: CalendarCellType;
@@ -22,7 +23,7 @@ export const CalendarCell: React.FC<CalendarCellProps> = ({ cell }) => {
   const dispatch = useDispatch();
 
   const { currentTheme, timeframe, filters } = useSelector(
-    (state) => state.marketData
+    (state: RootState) => state.marketData
   );
   const today = new Date();
   today.setHours(23, 59, 59, 999);

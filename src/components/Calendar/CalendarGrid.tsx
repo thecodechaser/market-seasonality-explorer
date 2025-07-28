@@ -7,11 +7,12 @@ import {
   getGridLayout,
   getHeaders,
 } from '../../utils/calenderHelpers';
+import { RootState } from '../../store/store';
 
 export const CalendarGrid = () => {
   const dispatch = useDispatch();
   const { selectedDate, timeframe, marketData, currentDate } = useSelector(
-    (state) => state.marketData
+    (state: RootState) => state.marketData
   );
 
   const cells = useMemo(() => {

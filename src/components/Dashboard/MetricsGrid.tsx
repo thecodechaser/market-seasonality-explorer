@@ -1,8 +1,9 @@
 import { Calculator, Target, Zap, Award } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export const MetricsGrid = () => {
-  const { dashboardData } = useSelector((state) => state.marketData);
+  const { dashboardData } = useSelector((state: RootState) => state.marketData);
   const data = dashboardData.data;
 
   const calculateRSI = () => {
@@ -12,13 +13,13 @@ export const MetricsGrid = () => {
 
   const calculateMA = () => {
     // Moving Average
-    return (data.close * (0.95 + Math.random() * 0.1)).toFixed(2);
+    return ((data?.close ?? 0) * (0.95 + Math.random() * 0.1)).toFixed(2);
   };
 
   const getMarketSentiment = () => {
-    if (data.performance > 2)
+    if (data && data.performance > 2)
       return { label: 'Bullish', color: 'text-green-400' };
-    if (data.performance < -2)
+    if (data && data.performance < -2)
       return { label: 'Bearish', color: 'text-red-400' };
     return { label: 'Neutral', color: 'text-gray-400' };
   };
@@ -39,7 +40,10 @@ export const MetricsGrid = () => {
     {
       icon: Zap,
       label: 'Market Cap',
-      value: `${((data.close * data.volume) / 1000000).toFixed(1)}M`,
+      value: `${(
+        ((data?.close ?? 0) * (data?.volume ?? 0)) /
+        1_000_000
+      ).toFixed(1)}M`,
       color: 'text-yellow-400',
     },
     {

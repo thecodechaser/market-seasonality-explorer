@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Filter,
   Download,
@@ -9,18 +9,19 @@ import {
   Image,
   FileSpreadsheet,
 } from 'lucide-react';
-import { FilterOptions, BinanceSymbol } from '../../types';
+import { BinanceSymbol } from '../../types';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateCurrentTheme, updateFilters } from '../../store/marketDataSlice';
 import { exportMarketData } from '../../utils/exportMarketData.ts';
 import { metrics, colorThemes } from '../../config/metricsConfig';
 import { loadSymbols } from '../../store/marketDataThunks';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { RootState, AppDispatch } from '../../store/store';
 
 export const FilterPanel = ({}) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { currentTheme, exportData, filters, symbols } = useSelector(
-    (state) => state.marketData
+    (state: RootState) => state.marketData
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [showSymbolSearch, setShowSymbolSearch] = useState(false);
@@ -34,7 +35,7 @@ export const FilterPanel = ({}) => {
     setShowSymbolSearch(false);
     setShowExportMenu(false);
   });
-  
+
   useEffect(() => {
     dispatch(loadSymbols());
   }, []);
@@ -64,7 +65,7 @@ export const FilterPanel = ({}) => {
     });
   };
 
-  const handleFilterChange = (newFilters: FilterOptions) => {
+  const handleFilterChange = (newFilters: any) => {
     dispatch(updateFilters(newFilters));
   };
 

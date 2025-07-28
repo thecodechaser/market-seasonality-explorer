@@ -11,10 +11,13 @@ import {
 } from '../../store/marketDataSlice';
 import { timeframes } from '../../config/metricsConfig';
 import { formatHeaderDate } from '../../utils/calenderHelpers';
+import { RootState } from '../../store/store';
 
 export const CalendarHeader = () => {
   const dispatch = useDispatch();
-  const { timeframe, currentDate } = useSelector((state) => state.marketData);
+  const { timeframe, currentDate } = useSelector(
+    (state: RootState) => state.marketData
+  );
 
   const handleTimeChange = (newTimeframe: TimeFrame['id']) => {
     dispatch(updateTimeframe(newTimeframe));

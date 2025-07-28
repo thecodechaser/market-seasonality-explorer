@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,11 +6,12 @@ import {
   loadMarketData,
   updateRealtimeData,
 } from '../../store/marketDataThunks';
+import { RootState, AppDispatch } from '../../store/store';
 
 export const Calendar = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { currentDate, loading, filters, timeframe } = useSelector(
-    (state: any) => state.marketData
+    (state: RootState) => state.marketData
   );
 
   useEffect(() => {

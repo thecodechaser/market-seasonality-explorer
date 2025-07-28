@@ -1,22 +1,40 @@
-import jsPDF from "jspdf";
+import jsPDF from 'jspdf';
+import { CalendarCell as CalendarCellType } from '../types';
 
-export const exportMarketData = ({ data, format }) => {
-  const validEntries = data.filter(d => d.data);
+export const exportMarketData = ({
+  data,
+  format,
+}: {
+  data: CalendarCellType[];
+  format: 'pdf' | 'csv' | 'image';
+}) => {
+  const validEntries = data.filter((d) => d.data);
 
   const timeframe = validEntries[0].timeframe;
-    const symbol = validEntries[0].data?.symbol || 'UNKNOWN';
-    const filename = `market-${symbol}-${timeframe}-${
-      new Date().toISOString().split('T')[0]
-    }`;
-    
-    if (validEntries.length === 0) {
-      alert('No market data available to export.');
-      return;
-    }
+  const symbol = validEntries[0].data?.symbol || 'UNKNOWN';
+  const filename = `market-${symbol}-${timeframe}-${
+    new Date().toISOString().split('T')[0]
+  }`;
 
-  if (format === "csv") {
+  if (validEntries.length === 0) {
+    alert('No market data available to export.');
+    return;
+  }
+
+  if (format === 'csv') {
     const csv = [
-      ["Date", "Open", "High", "Low", "Close", "Volume", "Volatility", "Liquidity", "Performance", "Timeframe"],
+      [
+        'Date',
+        'Open',
+        'High',
+        'Low',
+        'Close',
+        'Volume',
+        'Volatility',
+        'Liquidity',
+        'Performance',
+        'Timeframe',
+      ],
       ...validEntries.map(({ data }) => [
         data!.date,
         data!.open,
@@ -27,15 +45,15 @@ export const exportMarketData = ({ data, format }) => {
         data!.volatility,
         data!.liquidity,
         data!.performance,
-        timeframe
+        timeframe,
       ]),
     ]
-      .map(row => row.join(","))
-      .join("\n");
+      .map((row) => row.join(','))
+      .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `${filename}.csv`;
     a.click();
@@ -43,7 +61,7 @@ export const exportMarketData = ({ data, format }) => {
     return;
   }
 
-  if (format === "pdf") {
+  if (format === 'pdf') {
     const doc = new jsPDF();
     const lineHeight = 10;
     const pageHeight = doc.internal.pageSize.height;
@@ -54,7 +72,7 @@ export const exportMarketData = ({ data, format }) => {
       doc.text(`Market Data Export - ${symbol}`, 20, y);
       y += lineHeight;
       doc.setFontSize(12);
-      doc.text(`Timeframe: ${timeframe.toUpperCase()}`, 20, y);
+      doc.text(`Timeframe: ${timeframe?.toUpperCase()}`, 20, y);
       y += lineHeight;
       doc.text(`Generated: ${new Date().toLocaleString()}`, 20, y);
       y += lineHeight * 2;
@@ -77,8 +95,8 @@ export const exportMarketData = ({ data, format }) => {
     return;
   }
 
-  if (format === "image") {
-    const canvas = document.createElement("canvas");
+  if (format === 'image') {
+    const canvas = document.createElement('canvas');
     const rowHeight = 24;
     const padding = 20;
     const headerHeight = 50;
@@ -87,26 +105,28 @@ export const exportMarketData = ({ data, format }) => {
 
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
 
     if (ctx) {
-      ctx.fillStyle = "#111827";
+      ctx.fillStyle = '#111827';
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "16px monospace";
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '16px monospace';
 
       const headers = [
-        "Date",
-        "Open",
-        "High",
-        "Low",
-        "Close",
-        "Volume",
-        "Volatility",
-        "Liquidity",
-        "Performance",
+        'Date',
+        'Open',
+        'High',
+        'Low',
+        'Close',
+        'Volume',
+        'Volatility',
+        'Liquidity',
+        'Performance',
       ];
-      headers.forEach((h, i) => ctx.fillText(h, padding + i * 130, headerHeight));
+      headers.forEach((h, i) =>
+        ctx.fillText(h, padding + i * 130, headerHeight)
+      );
 
       validEntries.forEach(({ data }, idx) => {
         const y = headerHeight + (idx + 1) * rowHeight;
@@ -126,10 +146,10 @@ export const exportMarketData = ({ data, format }) => {
         });
       });
 
-      canvas.toBlob(blob => {
+      canvas.toBlob((blob) => {
         if (blob) {
           const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
+          const a = document.createElement('a');
           a.href = url;
           a.download = `${filename}.png`;
           document.body.appendChild(a);
