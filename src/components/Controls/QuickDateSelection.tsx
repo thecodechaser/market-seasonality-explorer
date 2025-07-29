@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   updateCustomDateRange,
   updateTimeframe,
-  clearFilters,
+  clearCustomDateRange,
 } from '../../store/marketDataSlice.ts';
 import { loadMarketData } from '../../store/marketDataThunks.ts';
 import { quickRanges } from '../../config/metricsConfig.ts';
@@ -27,7 +27,7 @@ export const QuickDateSelection = () => {
     setOpen(false);
 
     if (option.type === 'clear') {
-      dispatch(clearFilters());
+      dispatch(clearCustomDateRange());
       return;
     }
 

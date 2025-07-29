@@ -119,6 +119,10 @@ const marketDataSlice = createSlice({
     },
     updateCellTimeframe: (state, action) => {
       state.cellTimeframe = action.payload;
+    },
+    clearCustomDateRange: (state) => {
+      state.timeframe = initialState.timeframe;
+      state.customDateRange = initialState.customDateRange
     }
   },
 });
@@ -139,7 +143,8 @@ export const {
   clearFilters,
   updateFocusedCellIndex,
   updateCustomDateRange,
-  updateCellTimeframe
+  updateCellTimeframe,
+  clearCustomDateRange
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;
