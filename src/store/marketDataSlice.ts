@@ -95,6 +95,11 @@ const marketDataSlice = createSlice({
     },
     updateError: (state, action) => {
       state.error = action.payload
+    },
+    clearFilters: (state) => {
+      state.filters = initialState.filters;
+      state.timeframe = initialState.timeframe;
+      state.currentTheme = initialState.currentTheme
     }
   },
 });
@@ -111,7 +116,8 @@ export const {
   updateLoading,
   updateCurrentDate,
   updateSymbolList,
-  updateError
+  updateError,
+  clearFilters
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;
