@@ -156,7 +156,7 @@ export const generateCalendarCells = (
   } else if (timeframe === 'monthly') {
     // Generate monthly view
     const year = parsedCurrentDate.getFullYear();
-    
+
     for (let month = 0; month < 12; month++) {
       const monthStart = new Date(year, month, 1);
       const monthEnd = new Date(year, month + 1, 0);
@@ -227,4 +227,37 @@ export const getHeaders = (timeframe: string) => {
   if (timeframe === 'weekly')
     return ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
   return ['Q1', '', '', 'Q2', '', '', 'Q3', '', '', 'Q4', '', ''];
+};
+
+export const handleArrowNavigation = (
+  key: string,
+  currentIndex: number,
+  cells: CalendarCell[],
+  layoutClass: string
+): number | null => {
+  const cols = layoutClass.includes('grid-cols-7') ? 7 : 5;
+  const rows = Math.ceil(cells.length / cols);
+
+  let row = Math.floor(currentIndex / cols);
+  let col = currentIndex % cols;
+
+  switch (key) {
+    case 'ArrowRight':
+      col = (col + 1) % cols;
+      break;
+    case 'ArrowLeft':
+      col = (col - 1 + cols) % cols;
+      break;
+    case 'ArrowDown':
+      row = (row + 1) % rows;
+      break;
+    case 'ArrowUp':
+      row = (row - 1 + rows) % rows;
+      break;
+    default:
+      return null;
+  }
+
+  const nextIndex = row * cols + col;
+  return cells[nextIndex] ? nextIndex : currentIndex;
 };

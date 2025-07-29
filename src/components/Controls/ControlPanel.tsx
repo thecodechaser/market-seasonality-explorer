@@ -3,8 +3,12 @@ import { MetricsSelection } from './MetricsSelection.tsx';
 import { SymbolSelection } from './SymbolSelection.tsx';
 import { ExportData } from './ExportData.tsx';
 import { ThemeSelection } from './ThemeSelection.tsx';
+import { useDispatch } from 'react-redux';
+import { clearFilters } from "../../store/marketDataSlice.ts"
 
 export const ControlPanel = () => {
+  const dispatch = useDispatch();
+  
   return (
     <div className="p-4 mb-6 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
       <div className="flex items-center justify-between mb-4">
@@ -29,7 +33,7 @@ export const ControlPanel = () => {
             Quick Actions
           </label>
           <div className="space-y-2">
-            <button className="w-full px-3 py-2 text-sm text-left text-gray-300 transition-colors bg-gray-800 rounded-lg hover:bg-gray-700">
+            <button onClick={() => dispatch(clearFilters())} className="w-full px-3 py-2 text-sm text-left text-gray-300 transition-colors bg-gray-800 rounded-lg hover:bg-gray-700">
               Reset Filters
             </button>
             <button className="w-full px-3 py-2 text-sm text-left text-gray-300 transition-colors bg-gray-800 rounded-lg hover:bg-gray-700">
