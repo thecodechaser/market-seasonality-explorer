@@ -14,7 +14,7 @@ export const Header = () => {
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-white md:text-xl text-md">
+              <h1 className="text-sm font-bold text-white md:text-md lg:text-lg">
                 Market Seasonality Explorer
               </h1>
               <p className="text-xs text-gray-400 md:text-sm">

@@ -156,7 +156,7 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
                   ${cell.data.close.toLocaleString()}
                 </span>
                 <span
-                  className={`block md:hidden text-[10px] sm:text-xs text-gray-300 ${
+                  className={`block md:hidden text-[8.5px] sm:text-xs text-gray-300 ${
                     cellTimeframe !== 'daily' ? 'text-[10px]' : ''
                   }`}
                 >
