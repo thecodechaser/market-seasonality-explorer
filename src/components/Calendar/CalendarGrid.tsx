@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   updateExportData,
   updateFocusedCellIndex,
+  updateCellTimeframe,
 } from '../../store/marketDataSlice';
 import {
   generateCalendarCells,
@@ -25,8 +26,10 @@ export const CalendarGrid = () => {
     loading,
     error,
     focusedCellIndex,
+    customDateRange,
+    cellTimeframe,
   } = useSelector((state: RootState) => state.marketData);
-  const layoutClass = getGridLayout(timeframe);
+  const layoutClass = getGridLayout(cellTimeframe);
   const headers = getHeaders(timeframe);
   const cellRefs = useRef<(HTMLDivElement | null)[]>([]);
   const today = new Date();
@@ -34,18 +37,19 @@ export const CalendarGrid = () => {
   // Generate calendar cells with api data
   const cells = useMemo(() => {
     return generateCalendarCells(
-      currentDate,
+      timeframe === 'custom' ? customDateRange?.startDate || null : currentDate,
       timeframe,
       marketData,
-      selectedDate
+      timeframe === 'custom' ? customDateRange?.endDate || null : selectedDate
     );
   }, [currentDate, timeframe, marketData, selectedDate]);
 
   useEffect(() => {
     dispatch(updateExportData(cells.map(({ date, ...rest }) => rest)));
+    dispatch(updateCellTimeframe(cells[0]?.timeframe || timeframe));
   }, [dispatch, cells]);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (focusedCellIndex === null) return;
     const nextIndex = handleArrowNavigation(
       e.key,
@@ -66,6 +70,21 @@ export const CalendarGrid = () => {
       dispatch(updateFocusedCellIndex(null));
     }
   };
+
+  if (timeframe === 'custom') {
+    if (!customDateRange.startDate || !customDateRange.endDate) {
+      return (
+        <div className="flex items-center justify-center border rounded-lg h-96 bg-gray-900/50 border-gray-700/50">
+          <div className="text-center">
+            <div className="w-12 h-12 mx-auto mb-4 border-b-2 border-blue-400 rounded-full animate-bounce"></div>
+            <p className="text-gray-400">
+              Please select a start and end date to view data.
+            </p>
+          </div>
+        </div>
+      );
+    }
+  }
 
   return (
     <div

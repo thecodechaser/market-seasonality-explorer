@@ -10,7 +10,7 @@ export const ExportData = () => {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
 
-  useClickOutside([exportRef.current], () => {
+  useClickOutside([exportRef], () => {
     setShowExportMenu(false);
   });
 

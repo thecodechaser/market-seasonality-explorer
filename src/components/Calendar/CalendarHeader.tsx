@@ -3,7 +3,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar as CalendarIcon,
-  X,
 } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -12,15 +11,15 @@ import {
   updateCustomDateRange,
 } from '../../store/marketDataSlice';
 import { timeframes } from '../../config/metricsConfig';
-import { formatHeaderDate } from '../../utils/calenderHelpers';
+import { formatHeaderDate, formatDateRange } from '../../utils/calenderHelpers';
 import { RootState } from '../../store/store';
-import { DayPicker } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
 import { TimeFrame } from '../../types';
+import { AppDispatch } from '../../store/store';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { CustomDatePicker } from './CustomDatePicker';
 
 export const CalendarHeader = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { timeframe, currentDate, customDateRange } = useSelector(
     (state: RootState) => state.marketData
   );
@@ -58,23 +57,15 @@ export const CalendarHeader = () => {
     dispatch(updateCurrentDate(newDate.toISOString()));
   };
 
-  const formatCustomRange = () => {
-    const { startDate, endDate } = customDateRange || {};
-    if (!startDate || !endDate) return 'Select Date Range';
-    const start = new Date(startDate).toLocaleDateString();
-    const end = new Date(endDate).toLocaleDateString();
-    return `${start} - ${end}`;
-  };
-
   return (
-    <div className="relative z-10 flex flex-col gap-4 p-4 mb-6 border rounded-lg md:flex-row bg-white/5 border-white/10">
+    <div className="relative z-20 flex flex-col gap-4 p-4 mb-6 border rounded-lg md:flex-row bg-white/5 border-white/10">
       <div className="flex flex-col justify-between w-full gap-4 md:flex-row md:items-center">
         <div className="flex items-center justify-between md:justify-start md:space-x-4">
           <div className="flex items-center space-x-2">
             <CalendarIcon className="w-5 h-5 text-blue-400" />
             <h2 className="font-semibold text-white text-md md:text-xl">
               {timeframe === 'custom'
-                ? formatCustomRange()
+                ? formatDateRange(customDateRange?.startDate, customDateRange?.endDate)
                 : formatHeaderDate(timeframe, currentDate)}
             </h2>
           </div>
@@ -103,13 +94,12 @@ export const CalendarHeader = () => {
               onClick={() => setShowPicker(!showPicker)}
               className="flex items-center justify-between w-[220px] px-3 py-2 text-sm rounded-md bg-gray-700 text-white cursor-pointer hover:bg-gray-600 transition"
             >
-              <span>{formatCustomRange()}</span>
+              <span>{formatDateRange(customDateRange?.startDate, customDateRange?.endDate)}</span>
               <CalendarIcon className="w-4 h-4 ml-2 text-blue-400" />
             </div>
           </div>
         )}
 
-        {/* Timeframe buttons */}
         <div className="flex flex-wrap gap-2 md:ml-auto">
           {timeframes.map((tf) => (
             <button
@@ -127,66 +117,11 @@ export const CalendarHeader = () => {
         </div>
       </div>
 
-      {/* Calendar popup */}
       {timeframe === 'custom' && showPicker && (
-        <div
+        <CustomDatePicker
           ref={calendarRef}
-          className="absolute left-0 w-full p-4 mt-2 text-gray-300 rounded-lg shadow-xl bg-gray-800/95 top-full md:w-max"
-        >
-          <div className="flex justify-end mb-2">
-            <button
-              onClick={() => setShowPicker(false)}
-              className="text-gray-300"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="text-sm">
-              <p className="mb-1 font-medium text-gray-300">Start Date</p>
-              <DayPicker
-                mode="single"
-                selected={
-                  customDateRange?.startDate
-                    ? new Date(customDateRange.startDate)
-                    : undefined
-                }
-                onSelect={(date) => {
-                  if (!date) return;
-                  dispatch(
-                    updateCustomDateRange({
-                      ...customDateRange,
-                      startDate: date.toISOString(),
-                    })
-                  );
-                }}
-                className="text-xs"
-              />
-            </div>
-
-            <div className="text-sm">
-              <p className="mb-1 font-medium text-gray-300">End Date</p>
-              <DayPicker
-                mode="single"
-                selected={
-                  customDateRange?.endDate
-                    ? new Date(customDateRange.endDate)
-                    : undefined
-                }
-                onSelect={(date) => {
-                  if (!date) return;
-                  dispatch(
-                    updateCustomDateRange({
-                      ...customDateRange,
-                      endDate: date.toISOString(),
-                    })
-                  );
-                }}
-                className="text-xs"
-              />
-            </div>
-          </div>
-        </div>
+          onClose={() => setShowPicker(false)}
+        />
       )}
     </div>
   );

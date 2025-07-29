@@ -25,6 +25,7 @@ const initialState: {
   error: string | null;
   focusedCellIndex: number | null;
   customDateRange: CustomDateRange;
+  cellTimeframe: TimeFrame['id'] | null;
 } = {
   currentTheme: {
     id: 'default',
@@ -55,6 +56,7 @@ const initialState: {
     startDate: null,
     endDate: null,
   },
+  cellTimeframe: null,
 };
 
 // Actions
@@ -115,6 +117,9 @@ const marketDataSlice = createSlice({
     updateCustomDateRange: (state, action) => {
       state.customDateRange = action.payload;
     },
+    updateCellTimeframe: (state, action) => {
+      state.cellTimeframe = action.payload;
+    }
   },
 });
 
@@ -133,7 +138,8 @@ export const {
   updateError,
   clearFilters,
   updateFocusedCellIndex,
-  updateCustomDateRange
+  updateCustomDateRange,
+  updateCellTimeframe
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;

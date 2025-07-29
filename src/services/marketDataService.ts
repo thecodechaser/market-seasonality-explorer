@@ -73,7 +73,7 @@ class MarketDataService {
     startDate: Date,
     endDate: Date,
     symbol: string,
-    timeframe: 'daily' | 'weekly' | 'monthly' = 'daily'
+    timeframe: 'daily' | 'weekly' | 'monthly' | 'custom' = 'daily'
   ): Promise<MarketData[]> {
     const cacheKey = this.getCacheKey(startDate, endDate, symbol, timeframe);
     const cached = this.cache.get(cacheKey);

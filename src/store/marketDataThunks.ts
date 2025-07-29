@@ -25,7 +25,16 @@ export const loadMarketData = createAsyncThunk<
   try {
     let startDate: Date, endDate: Date;
 
-    if (timeframe === 'daily' || timeframe === 'weekly') {
+    if (timeframe === 'custom') {
+      const { startDate: rawStart, endDate: rawEnd } =
+        state.marketData.customDateRange || {};
+      if (!rawStart || !rawEnd) {
+        dispatch(updateMarketData([]));
+        return;
+      }
+      startDate = new Date(rawStart);
+      endDate = new Date(rawEnd);
+    } else if (timeframe === 'daily' || timeframe === 'weekly') {
       startDate = new Date(
         parsedCurrentDate.getFullYear(),
         parsedCurrentDate.getMonth(),

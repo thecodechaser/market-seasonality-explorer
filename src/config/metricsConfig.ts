@@ -56,3 +56,11 @@ export const timeframes: TimeFrame[] = [
   { id: 'monthly', label: 'Monthly' },
   { id: 'custom', label: 'Custom' }
 ];
+
+export const quickRanges = [
+  { label: "Last 7 Days", days: 7 },
+  { label: "Last 30 Days", days: 30 },
+  { label: "Last 90 Days", days: 90 },
+  { label: "This Month", type: "month" },
+  { label: "Clear Selection", type: "clear" },
+];

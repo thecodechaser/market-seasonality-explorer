@@ -26,7 +26,7 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
   (props, ref) => {
     const { cell, tabIndex = -1, isFocused, onFocus } = props;
     const dispatch = useDispatch();
-    const { currentTheme, timeframe, filters } = useSelector(
+    const { currentTheme, filters, cellTimeframe } = useSelector(
       (state: RootState) => state.marketData
     );
     const today = new Date();
@@ -65,7 +65,11 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
     const handleHoveredCell = (cell: CalendarCellType | null) =>
       dispatch(
         cell
-          ? updateHoveredCell((({ date, ...rest }) => rest)(cell))
+          ? updateHoveredCell(
+              Object.fromEntries(
+                Object.entries(cell).filter(([key]) => key !== 'date')
+              ) as Omit<CalendarCellType, 'date'>
+            )
           : updateHoveredCell(null)
       );
 
@@ -78,7 +82,7 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
             selectedDate: cell.date.toISOString(),
             data: cell.data,
             isVisible: true,
-            timeframe: timeframe,
+            timeframe: cellTimeframe,
           })
         );
       }
@@ -91,13 +95,13 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
         onFocus={onFocus}
         className={`
         relative ${getCellHeight(
-          timeframe
-        )} border rounded-lg transition-all duration-200 group
+          cellTimeframe
+        )} border rounded-lg transition-all duration-200 group z-10
         ${isFuture ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
         ${cell.isToday ? 'ring-2 ring-blue-400' : 'border-gray-700/50'}
         ${cell.isSelected ? 'ring-2 ring-blue-300' : ''}
         ${cell.isInRange ? 'bg-blue-500/20' : ''}
-        ${!isFuture ? 'hover:scale-105 hover:shadow-lg hover:z-10' : ''}
+        ${!isFuture ? 'hover:scale-105 hover:shadow-lg' : ''}
         ${isFocused ? 'ring-2 ring-white' : ''}
       `}
         style={
@@ -136,7 +140,7 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
                   : 'text-white'
               }`}
             >
-              {getCellContent(timeframe, cell.date)}
+              {getCellContent(cellTimeframe, cell.date)}
             </span>
             {getPerformanceIndicator(cell.data?.performance)}
           </div>
@@ -146,14 +150,14 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
               <div className="flex items-center justify-between">
                 <span
                   className={`hidden md:block text-xs text-gray-300 ${
-                    timeframe !== 'daily' ? 'text-[10px]' : ''
+                    cellTimeframe !== 'daily' ? 'text-[10px]' : ''
                   }`}
                 >
                   ${cell.data.close.toLocaleString()}
                 </span>
                 <span
                   className={`block md:hidden text-[10px] sm:text-xs text-gray-300 ${
-                    timeframe !== 'daily' ? 'text-[10px]' : ''
+                    cellTimeframe !== 'daily' ? 'text-[10px]' : ''
                   }`}
                 >
                   ${formatNumberCompact(cell.data.close)}
@@ -198,9 +202,9 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
             <div className="absolute mb-2 transition-opacity transform -translate-x-1/2 opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100">
               <div className="p-3 text-xs text-white bg-gray-900 border border-gray-700 rounded-lg shadow-xl min-w-48">
                 <div className="mb-2 font-semibold">
-                  {timeframe === 'daily'
+                  {cellTimeframe === 'daily'
                     ? cell.date.toLocaleDateString()
-                    : timeframe === 'weekly'
+                    : cellTimeframe === 'weekly'
                     ? getWeekRangeString(cell.date)
                     : cell.date.toLocaleDateString('en-US', {
                         month: 'long',
@@ -225,7 +229,7 @@ export const CalendarCell = forwardRef<HTMLDivElement, CalendarCellProps>(
                     <div className="flex justify-between">
                       <span>Volume:</span>
                       <span>
-                        {timeframe === 'monthly'
+                        {cellTimeframe === 'monthly'
                           ? `${(cell.data.volume / 1000000).toFixed(1)}M`
                           : `${(cell.data.volume / 1000).toFixed(0)}K`}
                       </span>

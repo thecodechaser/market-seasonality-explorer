@@ -20,7 +20,6 @@ export const SymbolSelection = () => {
 
   useClickOutside([symbolRef], () => setShowSymbolSearch(false), showSymbolSearch);
 
-
   useEffect(() => {
     dispatch(loadSymbols());
   }, [dispatch]);
@@ -48,7 +47,7 @@ export const SymbolSelection = () => {
   };
 
   return (
-    <div className="relative z-20" data-symbol-dropdown ref={symbolRef}>
+    <div className="relative z-30" data-symbol-dropdown ref={symbolRef}>
       <label className="block mb-2 text-sm font-medium text-gray-300">
         Symbol
       </label>

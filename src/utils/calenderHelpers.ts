@@ -7,7 +7,10 @@ export const formatNumberCompact = (num: number): string => {
   return num.toLocaleString();
 };
 
-export const getCellContent = (timeframe: string, date: Date): string => {
+export const getCellContent = (
+  timeframe: string | null,
+  date: Date
+): string => {
   if (timeframe === 'daily') return date.getDate().toString();
   if (timeframe === 'weekly') {
     const weekEnd = new Date(date);
@@ -17,7 +20,7 @@ export const getCellContent = (timeframe: string, date: Date): string => {
   return date.toLocaleDateString('en-US', { month: 'short' });
 };
 
-export const getCellHeight = (timeframe: string): string => {
+export const getCellHeight = (timeframe: string | null): string => {
   if (timeframe === 'daily') return 'h-20';
   if (timeframe === 'weekly') return 'h-24';
   return 'h-28';
@@ -55,6 +58,80 @@ export const formatHeaderDate = (
   }
 };
 
+export function getGranularity(
+  startDate: Date,
+  endDate: Date
+): 'daily' | 'weekly' | 'monthly' {
+  // Clear time portion
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  start.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+
+  const dayCount =
+    Math.abs((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+  if (dayCount < 30) return 'daily';
+  if (dayCount < 60) return 'weekly';
+  return 'monthly';
+}
+
+export const getGridLayout = (timeframe: string | null) => {
+  if (timeframe === 'daily') return 'grid-cols-7';
+  if (timeframe === 'weekly') return 'grid-cols-2 md:grid-cols-3';
+  return 'grid-cols-3 md:grid-cols-4';
+};
+
+export const getHeaders = (timeframe: string) => {
+  if (timeframe === 'daily')
+    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  if (timeframe === 'weekly')
+    return ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
+  return ['Q1', '', '', 'Q2', '', '', 'Q3', '', '', 'Q4', '', ''];
+};
+
+export const handleArrowNavigation = (
+  key: string,
+  currentIndex: number,
+  cells: CalendarCell[],
+  layoutClass: string
+): number | null => {
+  const cols = layoutClass.includes('grid-cols-7') ? 7 : 5;
+  const rows = Math.ceil(cells.length / cols);
+
+  let row = Math.floor(currentIndex / cols);
+  let col = currentIndex % cols;
+
+  switch (key) {
+    case 'ArrowRight':
+      col = (col + 1) % cols;
+      break;
+    case 'ArrowLeft':
+      col = (col - 1 + cols) % cols;
+      break;
+    case 'ArrowDown':
+      row = (row + 1) % rows;
+      break;
+    case 'ArrowUp':
+      row = (row - 1 + rows) % rows;
+      break;
+    default:
+      return null;
+  }
+
+  const nextIndex = row * cols + col;
+  return cells[nextIndex] ? nextIndex : currentIndex;
+};
+
+export const formatDateRange = (startDate?: Date | null, endDate?: Date | null): string => {
+  if (startDate && endDate) {
+    const start = new Date(startDate).toLocaleDateString();
+    const end = new Date(endDate).toLocaleDateString();
+    return `${start} - ${end}`;
+  }
+  return 'Quick Dates';
+};
+
 // Generate calendar cells with api data
 export const generateCalendarCells = (
   currentDate: Date | null,
@@ -68,8 +145,166 @@ export const generateCalendarCells = (
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  const getDateStr = (date: Date) => date.toISOString().split('T')[0];
+
+  if (timeframe === 'custom') {
+    const start = currentDate ? new Date(currentDate) : new Date();
+    const end = selectedDate ? new Date(selectedDate) : new Date();
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const dayCount =
+      Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+    if (dayCount < 30) {
+      // Daily Mode
+      const cursor = new Date(start);
+      while (cursor <= end) {
+        const data = marketData.find((d) => d.date === getDateStr(cursor));
+        cells.push({
+          date: new Date(cursor),
+          data: data,
+          isToday: cursor.getTime() === today.getTime(),
+          isSelected: parsedSelectedDate
+            ? cursor.getTime() === parsedSelectedDate.getTime()
+            : false,
+          isInRange: true,
+          timeframe: 'daily',
+        });
+        cursor.setDate(cursor.getDate() + 1);
+      }
+    } else if (dayCount < 60) {
+      // Weekly Mode
+      const cursor = new Date(start);
+      cursor.setDate(cursor.getDate() - cursor.getDay());
+      while (cursor <= end) {
+        const weekStart = new Date(cursor);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+
+        const weekData = marketData.filter((d) => {
+          const dDate = new Date(d.date);
+          return dDate >= weekStart && dDate <= weekEnd;
+        });
+
+        let aggregated: MarketData | undefined;
+        if (weekData.length > 0) {
+          aggregated = {
+            date: getDateStr(weekStart),
+            symbol: weekData[0].symbol,
+            open: weekData[0].open,
+            close: weekData[weekData.length - 1].close,
+            high: Math.max(...weekData.map((d) => d.high)),
+            low: Math.min(...weekData.map((d) => d.low)),
+            volume: weekData.reduce((sum, d) => sum + d.volume, 0),
+            volatility: Number(
+              (
+                weekData.reduce((sum, d) => sum + d.volatility, 0) /
+                weekData.length
+              ).toFixed(2)
+            ),
+            liquidity: Number(
+              (
+                weekData.reduce((sum, d) => sum + d.liquidity, 0) /
+                weekData.length
+              ).toFixed(2)
+            ),
+            performance: Number(
+              (
+                ((weekData[weekData.length - 1].close - weekData[0].open) /
+                  weekData[0].open) *
+                100
+              ).toFixed(2)
+            ),
+          };
+        }
+
+        cells.push({
+          date: new Date(weekStart),
+          data: aggregated,
+          isToday: today >= weekStart && today <= weekEnd,
+          isSelected:
+            parsedSelectedDate &&
+            parsedSelectedDate >= weekStart &&
+            parsedSelectedDate <= weekEnd,
+          isInRange: true,
+          timeframe: 'weekly',
+        });
+
+        cursor.setDate(cursor.getDate() + 7);
+      }
+    } else {
+      // Monthly Mode
+      const cursor = new Date(start);
+      cursor.setDate(1);
+      while (cursor <= end) {
+        const monthStart = new Date(cursor);
+        const monthEnd = new Date(
+          monthStart.getFullYear(),
+          monthStart.getMonth() + 1,
+          0
+        );
+
+        const monthData = marketData.filter((d) => {
+          const dDate = new Date(d.date);
+          return dDate >= monthStart && dDate <= monthEnd;
+        });
+
+        let aggregated: MarketData | undefined;
+        if (monthData.length > 0) {
+          aggregated = {
+            date: getDateStr(monthStart),
+            symbol: monthData[0].symbol,
+            open: monthData[0].open,
+            close: monthData[monthData.length - 1].close,
+            high: Math.max(...monthData.map((d) => d.high)),
+            low: Math.min(...monthData.map((d) => d.low)),
+            volume: monthData.reduce((sum, d) => sum + d.volume, 0),
+            volatility: Number(
+              (
+                monthData.reduce((sum, d) => sum + d.volatility, 0) /
+                monthData.length
+              ).toFixed(2)
+            ),
+            liquidity: Number(
+              (
+                monthData.reduce((sum, d) => sum + d.liquidity, 0) /
+                monthData.length
+              ).toFixed(2)
+            ),
+            performance: Number(
+              (
+                ((monthData[monthData.length - 1].close - monthData[0].open) /
+                  monthData[0].open) *
+                100
+              ).toFixed(2)
+            ),
+          };
+        }
+
+        cells.push({
+          date: new Date(monthStart),
+          data: aggregated,
+          isToday:
+            today.getFullYear() === monthStart.getFullYear() &&
+            today.getMonth() === monthStart.getMonth(),
+          isSelected:
+            parsedSelectedDate &&
+            parsedSelectedDate.getFullYear() === monthStart.getFullYear() &&
+            parsedSelectedDate.getMonth() === monthStart.getMonth(),
+          isInRange: true,
+          timeframe: 'monthly',
+        });
+
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+    }
+
+    return cells;
+  }
+
   if (timeframe === 'daily') {
-    // Generate daily calendar grid
+    // Generate daily view
     const year = parsedCurrentDate.getFullYear();
     const month = parsedCurrentDate.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -213,51 +448,4 @@ export const generateCalendarCells = (
   }
 
   return cells;
-};
-
-export const getGridLayout = (timeframe: string) => {
-  if (timeframe === 'daily') return 'grid-cols-7';
-  if (timeframe === 'weekly') return 'grid-cols-2 md:grid-cols-3';
-  return 'grid-cols-3 md:grid-cols-4';
-};
-
-export const getHeaders = (timeframe: string) => {
-  if (timeframe === 'daily')
-    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  if (timeframe === 'weekly')
-    return ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
-  return ['Q1', '', '', 'Q2', '', '', 'Q3', '', '', 'Q4', '', ''];
-};
-
-export const handleArrowNavigation = (
-  key: string,
-  currentIndex: number,
-  cells: CalendarCell[],
-  layoutClass: string
-): number | null => {
-  const cols = layoutClass.includes('grid-cols-7') ? 7 : 5;
-  const rows = Math.ceil(cells.length / cols);
-
-  let row = Math.floor(currentIndex / cols);
-  let col = currentIndex % cols;
-
-  switch (key) {
-    case 'ArrowRight':
-      col = (col + 1) % cols;
-      break;
-    case 'ArrowLeft':
-      col = (col - 1 + cols) % cols;
-      break;
-    case 'ArrowDown':
-      row = (row + 1) % rows;
-      break;
-    case 'ArrowUp':
-      row = (row - 1 + rows) % rows;
-      break;
-    default:
-      return null;
-  }
-
-  const nextIndex = row * cols + col;
-  return cells[nextIndex] ? nextIndex : currentIndex;
 };
