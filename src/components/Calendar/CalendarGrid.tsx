@@ -1,11 +1,15 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { CalendarCell } from './CalendarCell';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateExportData } from '../../store/marketDataSlice';
+import {
+  updateExportData,
+  updateFocusedCellIndex,
+} from '../../store/marketDataSlice';
 import {
   generateCalendarCells,
   getGridLayout,
   getHeaders,
+  handleArrowNavigation,
 } from '../../utils/calenderHelpers';
 import { RootState, AppDispatch } from '../../store/store';
 import { AlertCircle, RotateCcw } from 'lucide-react';
@@ -13,10 +17,19 @@ import { loadMarketData } from '../../store/marketDataThunks';
 
 export const CalendarGrid = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { selectedDate, timeframe, marketData, currentDate, loading, error } =
-    useSelector((state: RootState) => state.marketData);
+  const {
+    selectedDate,
+    timeframe,
+    marketData,
+    currentDate,
+    loading,
+    error,
+    focusedCellIndex,
+  } = useSelector((state: RootState) => state.marketData);
   const layoutClass = getGridLayout(timeframe);
   const headers = getHeaders(timeframe);
+  const cellRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const today = new Date();
 
   // Generate calendar cells with api data
   const cells = useMemo(() => {
@@ -32,8 +45,34 @@ export const CalendarGrid = () => {
     dispatch(updateExportData(cells.map(({ date, ...rest }) => rest)));
   }, [dispatch, cells]);
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (focusedCellIndex === null) return;
+    const nextIndex = handleArrowNavigation(
+      e.key,
+      focusedCellIndex,
+      cells,
+      layoutClass
+    );
+
+    if (nextIndex !== null && cells[nextIndex].date <= today) {
+      dispatch(updateFocusedCellIndex(nextIndex));
+      cellRefs.current[nextIndex]?.focus();
+    }
+
+    if (e.key === 'Enter') {
+      cellRefs.current[focusedCellIndex]?.click();
+    }
+    if (e.key === 'Escape') {
+      dispatch(updateFocusedCellIndex(null));
+    }
+  };
+
   return (
-    <div className="p-4 border rounded-lg bg-gray-900/50 border-gray-700/50">
+    <div
+      className="p-4 border rounded-lg bg-gray-900/50 border-gray-700/50"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+    >
       {/* Headers/Days */}
       {timeframe === 'daily' && (
         <div className="grid grid-cols-7 gap-2 mb-4">
@@ -71,7 +110,14 @@ export const CalendarGrid = () => {
       ) : (
         <div className={`grid ${layoutClass} gap-2`}>
           {cells.map((cell, index) => (
-            <CalendarCell key={index} cell={cell} />
+            <CalendarCell
+              key={index}
+              cell={cell}
+              ref={(el) => (cellRefs.current[index] = el)}
+              tabIndex={focusedCellIndex === index ? 0 : -1}
+              isFocused={focusedCellIndex === index}
+              onFocus={() => dispatch(updateFocusedCellIndex(index))}
+            />
           ))}
         </div>
       )}

@@ -21,7 +21,8 @@ const initialState: {
   loading: boolean;
   currentDate: Date | null;
   symbols: BinanceSymbol[];
-  error: string | null
+  error: string | null;
+  focusedCellIndex: number | null;
 } = {
   currentTheme: {
     id: 'default',
@@ -47,6 +48,7 @@ const initialState: {
   currentDate: null,
   symbols: [],
   error: null,
+  focusedCellIndex: null,
 };
 
 // Actions
@@ -100,6 +102,9 @@ const marketDataSlice = createSlice({
       state.filters = initialState.filters;
       state.timeframe = initialState.timeframe;
       state.currentTheme = initialState.currentTheme
+    },
+    updateFocusedCellIndex: (state, action) => {
+      state.focusedCellIndex = action.payload
     }
   },
 });
@@ -117,7 +122,8 @@ export const {
   updateCurrentDate,
   updateSymbolList,
   updateError,
-  clearFilters
+  clearFilters,
+  updateFocusedCellIndex
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;
