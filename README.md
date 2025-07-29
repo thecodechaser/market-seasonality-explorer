@@ -14,15 +14,36 @@
 
 ## Built With
 
-- HTML
-- CSS
 - JavaScript
 - TypeScript
 - React
 - Redux Toolkit
 - Jest
-- Vite
 - Tailwind CSS
+
+## Libraries Used
+- React: Core UI library for building components.
+- Redux Toolkit: Simplified state management.
+- React-Redux: React bindings for Redux.
+- Jest: Testing framework.
+- React Testing Library: Utilities for testing UI interactions.
+- Vite: Fast build and development server.
+- Tailwind CSS: Utility-first CSS framework for rapid UI development.
+- Lucide React: Icon set for React.
+- React Day Picker: Accessible date picker component.
+- jsPDF: Client-side PDF generation.
+- Redux Mock Store: For mocking Redux stores in tests.
+
+For a complete list, check the package.json file
+
+## Assumptions Made
+
+- The app requires an active internet connection to fetch live crypto data.
+- Users are expected to interact with the dashboard using modern browsers that support ES modules.
+- Data is expected to be available and structured in a format consumable by the charting and calendar logic.
+- All styling is done using Tailwind CSS and assumes no external CSS frameworks will be mixed in.
+- Testing assumes the DOM is simulated using jsdom through Jest.
+- All dates and times are handled in the user’s local timezone unless explicitly set otherwise.
 
 ## Live version
 
