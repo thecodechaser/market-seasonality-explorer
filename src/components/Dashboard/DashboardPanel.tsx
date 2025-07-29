@@ -14,7 +14,7 @@ export const DashboardPanel = () => {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(
-    [panelRef.current],
+    [panelRef],
     () => {
       if (dashboardData.isVisible) {
         handleClose();

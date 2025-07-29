@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 // Handle closing elements when clicked outside
 export const useClickOutside = (
-  elementsRefs: (HTMLElement | null)[],
+  elementRefs: React.RefObject<HTMLElement>[],
   handler: () => void,
   enabled: boolean = true
 ) => {
@@ -10,10 +10,10 @@ export const useClickOutside = (
     if (!enabled) return;
 
     function handleClickOutside(event: MouseEvent) {
-      const clickedOutside = elementsRefs.every(
-        (el) => el && !el.contains(event.target as Node)
+      const clickedOutside = elementRefs.every(
+        (ref) =>
+          ref.current && !ref.current.contains(event.target as Node)
       );
-
       if (clickedOutside) {
         handler();
       }
@@ -23,5 +23,6 @@ export const useClickOutside = (
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [elementsRefs, handler, enabled]);
+  }, [elementRefs, handler, enabled]);
 };
+

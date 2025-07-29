@@ -81,7 +81,7 @@ export interface CalendarCell {
 }
 
 export interface TimeFrame {
-  id: 'daily' | 'weekly' | 'monthly';
+  id: 'daily' | 'weekly' | 'monthly' | 'custom';
   label: string;
 }
 
@@ -106,4 +106,9 @@ export interface DashboardData {
   data: MarketData | null;
   isVisible: boolean;
   timeframe?: 'daily' | 'weekly' | 'monthly';
+}
+
+export interface CustomDateRange {
+  startDate: Date | null;
+  endDate: Date | null;
 }

@@ -5,7 +5,8 @@ import {
   ColorTheme,
   TimeFrame,
   CalendarCell as CalendarCellType,
-  BinanceSymbol
+  BinanceSymbol,
+  CustomDateRange,
 } from '../types';
 
 // Initial state
@@ -23,6 +24,7 @@ const initialState: {
   symbols: BinanceSymbol[];
   error: string | null;
   focusedCellIndex: number | null;
+  customDateRange: CustomDateRange;
 } = {
   currentTheme: {
     id: 'default',
@@ -49,6 +51,10 @@ const initialState: {
   symbols: [],
   error: null,
   focusedCellIndex: null,
+  customDateRange: {
+    startDate: null,
+    endDate: null,
+  },
 };
 
 // Actions
@@ -96,16 +102,19 @@ const marketDataSlice = createSlice({
       state.symbols = action.payload;
     },
     updateError: (state, action) => {
-      state.error = action.payload
+      state.error = action.payload;
     },
     clearFilters: (state) => {
       state.filters = initialState.filters;
       state.timeframe = initialState.timeframe;
-      state.currentTheme = initialState.currentTheme
+      state.currentTheme = initialState.currentTheme;
     },
     updateFocusedCellIndex: (state, action) => {
-      state.focusedCellIndex = action.payload
-    }
+      state.focusedCellIndex = action.payload;
+    },
+    updateCustomDateRange: (state, action) => {
+      state.customDateRange = action.payload;
+    },
   },
 });
 
@@ -123,7 +132,8 @@ export const {
   updateSymbolList,
   updateError,
   clearFilters,
-  updateFocusedCellIndex
+  updateFocusedCellIndex,
+  updateCustomDateRange
 } = marketDataSlice.actions;
 
 export default marketDataSlice.reducer;

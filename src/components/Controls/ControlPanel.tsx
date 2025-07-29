@@ -10,7 +10,7 @@ export const ControlPanel = () => {
   const dispatch = useDispatch();
   
   return (
-    <div className="p-4 mb-6 border rounded-lg bg-gray-900/50 backdrop-blur-sm border-gray-700/50">
+    <div className="p-4 mb-6 border rounded-lg bg-gray-900/50 border-gray-700/50">
       <div className="flex items-center justify-between mb-4">
         <h3 className="flex items-center font-semibold text-white text-md md:text-lg">
           <Filter className="w-5 h-5 mr-2" />

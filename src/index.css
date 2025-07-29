@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rdp-root {
+  --rdp-accent-color: #38bdf8;
+  --rdp-nav_button-height: 20px !important;
+  --rdp-nav_button-width: 20px !important; 
+}

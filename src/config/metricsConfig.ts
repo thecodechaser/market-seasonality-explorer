@@ -54,4 +54,5 @@ export const timeframes: TimeFrame[] = [
   { id: 'daily', label: 'Daily' },
   { id: 'weekly', label: 'Weekly' },
   { id: 'monthly', label: 'Monthly' },
+  { id: 'custom', label: 'Custom' }
 ];

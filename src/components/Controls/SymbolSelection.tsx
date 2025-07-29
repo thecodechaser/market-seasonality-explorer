@@ -18,9 +18,8 @@ export const SymbolSelection = () => {
   const [filteredSymbols, setFilteredSymbols] = useState<BinanceSymbol[]>([]);
   const symbolRef = useRef<HTMLDivElement>(null);
 
-  useClickOutside([symbolRef.current], () => {
-    setShowSymbolSearch(false);
-  });
+  useClickOutside([symbolRef], () => setShowSymbolSearch(false), showSymbolSearch);
+
 
   useEffect(() => {
     dispatch(loadSymbols());
@@ -49,7 +48,7 @@ export const SymbolSelection = () => {
   };
 
   return (
-    <div className="relative z-[100]" data-symbol-dropdown ref={symbolRef}>
+    <div className="relative z-20" data-symbol-dropdown ref={symbolRef}>
       <label className="block mb-2 text-sm font-medium text-gray-300">
         Symbol
       </label>
@@ -66,7 +65,7 @@ export const SymbolSelection = () => {
         </button>
 
         {showSymbolSearch && (
-          <div className="absolute left-0 right-0 mt-1 overflow-hidden border border-gray-600 rounded-lg shadow-xl top-full bg-gray-800/95 backdrop-blur-sm max-h-64">
+          <div className="absolute left-0 right-0 mt-1 overflow-hidden border border-gray-600 rounded-lg shadow-xl top-full bg-gray-800/95 max-h-64">
             <div className="p-2 border-b border-gray-700">
               <input
                 type="text"
