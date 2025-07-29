@@ -84,7 +84,6 @@ describe('CalendarCell', () => {
       selectedDate: '2025-07-28T00:00:00.000Z',
       data: baseCell.data,
       isVisible: true,
-      timeframe: 'daily',
     });
   });
 
