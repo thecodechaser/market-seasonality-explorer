@@ -16,10 +16,6 @@
 
 - JavaScript
 - TypeScript
-- React
-- Redux Toolkit
-- Jest
-- Tailwind CSS
 
 ## Libraries Used
 - React: Core UI library for building components.
@@ -35,15 +31,6 @@
 - Redux Mock Store: For mocking Redux stores in tests.
 
 For a complete list, check the package.json file
-
-## Assumptions Made
-
-- The app requires an active internet connection to fetch live crypto data.
-- Users are expected to interact with the dashboard using modern browsers that support ES modules.
-- Data is expected to be available and structured in a format consumable by the charting and calendar logic.
-- All styling is done using Tailwind CSS and assumes no external CSS frameworks will be mixed in.
-- Testing assumes the DOM is simulated using jsdom through Jest.
-- All dates and times are handled in the user’s local timezone unless explicitly set otherwise.
 
 ## Live version
 
